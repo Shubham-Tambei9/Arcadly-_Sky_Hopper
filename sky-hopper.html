@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sky Hopper | Arcadly</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Syne:wght@700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Arcadly Games Data -->
+    <script src="js/games_registry.js"></script>
+    <script src="data/sky-hopper.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FCF5E5',
+                        orange: '#FF6B35',
+                        yellow: '#FFD100',
+                        blue: '#1A659E',
+                        black: '#111111',
+                    },
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        display: ['Syne', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FCF5E5;
+            color: #111111;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .dark body {
+            background-color: #000000;
+            color: #ffffff;
+        }
+
+        .neo-border {
+            border: 3px solid #111111;
+        }
+
+        .dark .neo-border {
+            border-color: #ffffff;
+        }
+
+        .neo-shadow {
+            box-shadow: 4px 4px 0px 0px #111111;
+        }
+
+        .dark .neo-shadow {
+            box-shadow: 4px 4px 0px 0px #FFD100;
+        }
+
+        .neo-shadow-lg {
+            box-shadow: 8px 8px 0px 0px #111111;
+        }
+
+        .dark .neo-shadow-lg {
+            box-shadow: 8px 8px 0px 0px #FF6B35;
+        }
+
+        .neo-button {
+            border: 3px solid #111111;
+            box-shadow: 4px 4px 0px 0px #111111;
+            transition: all 0.1s ease;
+        }
+
+        .neo-button:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 6px 6px 0px 0px #111111;
+        }
+
+        .neo-button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px 0px #111111;
+        }
+
+        .bg-pattern {
+            background-image: radial-gradient(#111111 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.1;
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased overflow-x-hidden">
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 flex justify-center p-6">
+        <div
+            class="bg-white dark:bg-black neo-border neo-shadow px-8 py-3 flex items-center space-x-8 text-black dark:text-white">
+            <a href="index.html#hero" class="text-sm font-bold hover:text-orange transition-colors">Home</a>
+            <a href="index.html#games" class="text-sm font-bold hover:text-orange transition-colors">Games</a>
+            <a href="index.html#devlog" class="text-sm font-bold hover:text-orange transition-colors">Dev Log</a>
+            <a href="privacy.html" class="text-sm font-bold hover:text-orange transition-colors">Privacy Policy</a>
+        </div>
+
+        <!-- Theme Toggle Positioned Top Right -->
+        <div class="absolute right-6 top-6">
+            <button onclick="toggleDarkMode()"
+                class="neo-button w-12 h-12 flex items-center justify-center bg-yellow dark:bg-orange p-0">
+                <i data-lucide="moon" class="dark:hidden w-6 h-6"></i>
+                <i data-lucide="sun" class="hidden dark:block w-6 h-6"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Game Hero -->
+    <section
+        class="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 pt-48 pb-32 overflow-hidden">
+        <div class="absolute inset-0 bg-pattern -z-10"></div>
+
+        <div class="mb-8 relative" data-aos="zoom-in">
+            <div class="absolute -inset-2 bg-blue neo-border neo-shadow -z-10 -rotate-3"></div>
+            <img src="assets/Skyhopper.png" alt="Sky Hopper" class="w-48 md:w-64 h-auto neo-border neo-shadow rotate-2">
+        </div>
+
+        <div data-aos="fade-up">
+            <p class="bg-yellow px-4 py-1 neo-border text-black inline-block font-black uppercase tracking-widest mb-4">
+                Developed by Arcadly</p>
+            <h1 class="text-6xl md:text-9xl font-display font-black tracking-tighter mb-6 uppercase italic">SKY HOPPER
+            </h1>
+        </div>
+
+        <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-6 mt-8"
+            data-aos="fade-up" data-aos-delay="200">
+            <a href="https://play.google.com/store/apps/details?id=com.srt.skyhopper"
+                class="neo-button bg-orange px-12 py-5 font-black text-2xl uppercase tracking-tight flex items-center justify-center w-full md:w-auto">
+                <i data-lucide="download" class="mr-3"></i> DOWNLOAD NOW
+            </a>
+
+            <div class="flex space-x-4 w-full md:w-auto justify-center">
+                <a href="privacy.html" class="neo-button bg-white px-6 py-5 font-bold text-sm flex items-center">
+                    <i data-lucide="shield-check" class="mr-2 w-5 h-5 text-orange"></i> PRIVACY POLICY
+                </a>
+                <a href="app-ads.txt" class="neo-button bg-white px-6 py-5 font-bold text-sm flex items-center">
+                    <i data-lucide="file-text" class="mr-2 w-5 h-5 text-blue"></i> APP-ADS.TXT
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Game Info -->
+    <section class="py-32 px-4 bg-white border-y-[6px] border-black">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            <div data-aos="fade-right">
+                <h2 class="text-5xl font-display font-black mb-10 uppercase italic border-l-[12px] border-orange pl-8">
+                    About the <span class="bg-yellow px-3 neo-border">Game</span></h2>
+                <p class="text-xl font-bold leading-relaxed mb-8 text-black/80">
+                    Sky Hopper is the ultimate test of your reflexes and timing. In this high-flying arcade adventure,
+                    you control a vibrant bird navigating through a treacherous sky filled with obstacles.
+                </p>
+                <p class="text-lg font-medium leading-relaxed mb-10 border-black border-2 p-6 bg-cream neo-shadow">
+                    Master the "One-Tap" mechanics to soar between pipes and climb the global leaderboards. Every run is
+                    procedurally generated, ensuring no two flights are ever the same. Crafted with a vibrant neo-retro
+                    aesthetic that pops off the screen.
+                </p>
+
+                <div class="grid grid-cols-2 gap-8">
+                    <div class="bg-blue/10 neo-border neo-shadow p-6">
+                        <h4 class="text-black font-black uppercase text-xs tracking-[0.2em] mb-2">Publisher</h4>
+                        <p class="text-black font-black text-xl">Arcadly</p>
+                    </div>
+                    <div class="bg-orange/10 neo-border neo-shadow p-6">
+                        <h4 class="text-black font-black uppercase text-xs tracking-[0.2em] mb-2">Release Date</h4>
+                        <p class="text-black font-black text-xl">2026</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Media Section -->
+            <div class="relative" data-aos="fade-left">
+                <div class="absolute -inset-4 bg-yellow neo-border neo-shadow -z-10 rotate-2"></div>
+                <div
+                    class="bg-white neo-border neo-shadow p-2 overflow-hidden -rotate-1 hover:rotate-0 transition-transform cursor-pointer">
+                    <div class="relative aspect-video bg-black flex items-center justify-center">
+                        <img src="assets/hero_banner.png" alt="Trailer"
+                            class="absolute inset-0 w-full h-full object-cover opacity-50">
+                        <div
+                            class="neo-button w-24 h-24 bg-orange rounded-full flex items-center justify-center text-black">
+                            <i data-lucide="play" size="40" class="ml-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery -->
+    <section class="py-32 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-16" data-aos="fade-up">
+                <h2 class="text-5xl font-display font-black mb-4 uppercase italic">Gallery</h2>
+                <div class="w-32 h-3 bg-orange neo-border"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Screenshot 1 -->
+                <div class="bg-white neo-border neo-shadow overflow-hidden group hover:-translate-y-2 transition-transform"
+                    data-aos="fade-up" data-aos-delay="100">
+                    <div class="aspect-[9/16] relative overflow-hidden">
+                        <img src="assets/screenshot3.jpg" alt="Sky Hopper Gameplay 1"
+                            class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                </div>
+                <!-- Screenshot 2 -->
+                <div class="bg-white neo-border neo-shadow overflow-hidden group hover:-translate-y-2 transition-transform rotate-2 hover:rotate-0"
+                    data-aos="fade-up" data-aos-delay="200">
+                    <div class="aspect-[9/16] relative overflow-hidden">
+                        <img src="assets/screenshot4.jpg" alt="Sky Hopper Gameplay 2"
+                            class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                </div>
+                <!-- Screenshot 3 -->
+                <div class="bg-white neo-border neo-shadow overflow-hidden group hover:-translate-y-2 transition-transform -rotate-1 hover:rotate-0"
+                    data-aos="fade-up" data-aos-delay="300">
+                    <div class="aspect-[9/16] relative overflow-hidden">
+                        <img src="assets/screenshot2.jpg" alt="Sky Hopper Gameplay 3"
+                            class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                </div>
+                <!-- Screenshot 4 -->
+                <div class="bg-white neo-border neo-shadow overflow-hidden group hover:-translate-y-2 transition-transform rotate-1 hover:rotate-0"
+                    data-aos="fade-up" data-aos-delay="400">
+                    <div class="aspect-[9/16] relative overflow-hidden">
+                        <img src="assets/screenshot1.jpg" alt="Sky Hopper Gameplay 4"
+                            class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-24 px-4 border-t-[6px] border-black bg-white">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+            <h3 class="text-4xl font-display font-black mb-8 md:mb-0 italic uppercase">ARCADLY</h3>
+            <div class="flex space-x-12 font-black uppercase tracking-widest text-sm">
+                <a href="index.html" class="hover:text-orange">Home</a>
+                <a href="privacy.html" class="hover:text-orange">Privacy</a>
+                <a href="mailto:skyhopper089@gmail.com" class="hover:text-orange">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const game = gamesRegistry.find(g => g.id === 'sky-hopper');
+        if (game) { document.title = `${game.title} | Arcadly`; }
+        lucide.createIcons();
+        AOS.init({ duration: 1000, once: true });
+    </script>
+</body>
+
+</html>

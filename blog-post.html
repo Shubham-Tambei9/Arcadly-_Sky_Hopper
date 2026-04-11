@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | Arcadly</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Syne:wght@700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="js/blog_registry.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FCF5E5',
+                        orange: '#FF6B35',
+                        yellow: '#FFD100',
+                        blue: '#1A659E',
+                        black: '#111111',
+                    },
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        display: ['Syne', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FCF5E5;
+            color: #111111;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .dark body {
+            background-color: #000000;
+            color: #ffffff;
+        }
+
+        .neo-border {
+            border: 3px solid #111111;
+        }
+
+        .dark .neo-border {
+            border-color: #ffffff;
+        }
+
+        .neo-shadow {
+            box-shadow: 4px 4px 0px 0px #111111;
+        }
+
+        .dark .neo-shadow {
+            box-shadow: 4px 4px 0px 0px #FFD100;
+        }
+
+        .neo-button {
+            border: 3px solid #111111;
+            box-shadow: 4px 4px 0px 0px #111111;
+            transition: all 0.2s;
+        }
+
+        .dark .neo-button {
+            border-color: #ffffff;
+            box-shadow: 4px 4px 0px 0px #ffffff;
+        }
+
+        .neo-button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px #111111;
+        }
+
+        .highlight {
+            background: #FFD100;
+            padding: 24px;
+            border: 3px solid #111111;
+            box-shadow: 4px 4px 0px 0px #111111;
+            color: #111111;
+        }
+
+        .dark .highlight {
+            background: #FF6B35;
+            border-color: #ffffff;
+            box-shadow: 4px 4px 0px 0px #FFD100;
+        }
+
+        .bg-pattern {
+            background-image: radial-gradient(#111111 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .dark .bg-pattern {
+            background-image: radial-gradient(#ffffff20 1px, transparent 1px);
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased overflow-x-hidden">
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 flex justify-center p-6 text-black dark:text-white">
+        <div class="bg-white dark:bg-black neo-border neo-shadow px-8 py-3 flex items-center space-x-8">
+            <a href="index.html#hero" class="text-sm font-bold hover:text-orange transition-colors">Home</a>
+            <a href="index.html#games" class="text-sm font-bold hover:text-orange transition-colors">Games</a>
+            <a href="index.html#devlog" class="text-sm font-bold hover:text-orange transition-colors">Dev Log</a>
+            <a href="privacy.html" class="text-sm font-bold hover:text-orange transition-colors">Privacy Policy</a>
+        </div>
+
+        <!-- Theme Toggle Positioned Top Right -->
+        <div class="absolute right-6 top-6">
+            <button onclick="toggleDarkMode()"
+                class="neo-button w-12 h-12 flex items-center justify-center bg-yellow dark:bg-orange p-0">
+                <i data-lucide="moon" class="dark:hidden w-6 h-6"></i>
+                <i data-lucide="sun" class="hidden dark:block w-6 h-6"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="pt-48 pb-32 px-4 max-w-4xl mx-auto">
+        <div id="post-container" data-aos="fade-up">
+            <!-- Dynamic Content Injected Here -->
+            <div class="text-center py-20">
+                <h1 class="text-4xl font-display font-black uppercase">Loading Post...</h1>
+            </div>
+        </div>
+
+        <!-- Back to Home -->
+        <div class="mt-20 text-center" data-aos="fade-up">
+            <a href="index.html#devlog"
+                class="neo-button bg-yellow dark:bg-orange px-10 py-4 font-black uppercase tracking-widest text-black">
+                BACK TO LOG
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-24 px-4 border-t-[6px] border-black bg-white dark:bg-black dark:text-white transition-colors">
+        <div class="max-w-7xl mx-auto text-center">
+            <h3 class="text-4xl font-display font-black mb-3 italic">ARCADLY</h3>
+            <p class="text-black/50 dark:text-white/50 text-sm font-bold uppercase tracking-widest">© 2026 Crafted for
+                Champions.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme Logic
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        }
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+
+        // Initialize Tools
+        AOS.init({ duration: 800, once: true });
+        lucide.createIcons();
+
+        // Render Post
+        function renderPost() {
+            const params = new URLSearchParams(window.location.search);
+            const postId = params.get('id');
+            const post = blogRegistry.find(p => p.id === postId);
+            const container = document.getElementById('post-container');
+
+            if (!post) {
+                container.innerHTML = `
+                    <div class="text-center py-20">
+                        <h1 class="text-6xl font-display font-black uppercase italic mb-6">404: POST NOT FOUND</h1>
+                        <p class="text-xl font-bold mb-8">This update has been lost in the void.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            document.title = `${post.title} | Arcadly`;
+
+            container.innerHTML = `
+                <div class="mb-12">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="${post.categoryColor} px-3 py-1 neo-border font-black text-xs uppercase tracking-widest">${post.category}</span>
+                        <span class="text-sm font-bold text-black/50 dark:text-white/50">${post.date}</span>
+                    </div>
+                    <h1 class="text-5xl md:text-7xl font-display font-black uppercase italic leading-none mb-8 dark:text-white">
+                        ${post.title}
+                    </h1>
+                </div>
+
+                <div class="w-full aspect-video bg-white neo-border neo-shadow-lg mb-12 overflow-hidden">
+                    <img src="${post.image}" alt="${post.title}" class="w-full h-full object-cover">
+                </div>
+
+                <div class="bg-white dark:bg-zinc-900 neo-border neo-shadow p-8 md:p-12 text-black dark:text-white font-bold leading-relaxed text-lg">
+                    ${post.content}
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        renderPost();
+    </script>
+</body>
+
+</html>

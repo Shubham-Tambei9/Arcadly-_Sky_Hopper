@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcadly</title>
+    <meta name="description" content="Portfolio of Arcadly, featuring Sky Hopper and other exciting arcade titles.">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Syne:wght@700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Arcadly Games Data -->
+    <script src="js/games_registry.js"></script>
+    <script src="data/sky-hopper.js"></script>
+    <script src="data/orbit-rush.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FCF5E5',
+                        orange: '#FF6B35',
+                        yellow: '#FFD100',
+                        blue: '#1A659E',
+                        black: '#111111',
+                    },
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        display: ['Syne', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'neo': '4px 4px 0px 0px #111111',
+                        'neo-lg': '8px 8px 0px 0px #111111',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FCF5E5;
+            color: #111111;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .dark body {
+            background-color: #000000;
+            color: #ffffff;
+        }
+
+        .neo-border {
+            border: 3px solid #111111;
+        }
+
+        .dark .neo-border {
+            border-color: #ffffff;
+        }
+
+        .neo-shadow {
+            box-shadow: 4px 4px 0px 0px #111111;
+        }
+
+        .dark .neo-shadow {
+            box-shadow: 4px 4px 0px 0px #FFD100;
+        }
+
+        .neo-shadow-lg {
+            box-shadow: 8px 8px 0px 0px #111111;
+        }
+
+        .dark .neo-shadow-lg {
+            box-shadow: 8px 8px 0px 0px #FF6B35;
+        }
+
+        .neo-button {
+            border: 3px solid #111111;
+            box-shadow: 4px 4px 0px 0px #111111;
+            transition: all 0.1s ease;
+        }
+
+        .dark .neo-button {
+            border-color: #ffffff;
+            box-shadow: 4px 4px 0px 0px #FF6B35;
+            background-color: #111111;
+            color: #ffffff;
+        }
+
+        .neo-button:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 6px 6px 0px 0px #111111;
+        }
+
+        .dark .neo-button:hover {
+            box-shadow: 6px 6px 0px 0px #FF6B35;
+        }
+
+        .neo-button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px 0px #111111;
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased overflow-x-hidden">
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 flex justify-center p-6">
+        <div
+            class="bg-white dark:bg-black neo-border neo-shadow px-8 py-3 flex items-center space-x-8 text-black dark:text-white">
+            <a href="index.html#hero" class="text-sm font-bold hover:text-orange transition-colors">Home</a>
+            <a href="index.html#games" class="text-sm font-bold hover:text-orange transition-colors">Games</a>
+            <a href="index.html#devlog" class="text-sm font-bold hover:text-orange transition-colors">Dev Log</a>
+            <a href="privacy.html" class="text-sm font-bold hover:text-orange transition-colors">Privacy Policy</a>
+        </div>
+
+        <!-- Theme Toggle Positioned Top Right -->
+        <div class="absolute right-6 top-6">
+            <button onclick="toggleDarkMode()"
+                class="neo-button w-12 h-12 flex items-center justify-center bg-yellow dark:bg-orange p-0">
+                <i data-lucide="moon" class="dark:hidden w-6 h-6"></i>
+                <i data-lucide="sun" class="hidden dark:block w-6 h-6"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero"
+        class="relative min-h-screen flex flex-col items-center justify-center text-center px-4 pt-48 pb-32 overflow-hidden transition-colors dark:bg-black">
+
+        <div class="mb-10 relative" data-aos="zoom-in" data-aos-duration="800">
+            <!-- Background Blob -->
+            <div class="absolute -inset-4 bg-yellow neo-border neo-shadow -z-10 rotate-3 dark:bg-orange"></div>
+            <img src="assets/Arcadly.png" alt="Arcadly Logo"
+                class="w-64 md:w-80 h-auto neo-border neo-shadow -rotate-2">
+        </div>
+
+        <div data-aos="fade-up" data-aos-delay="200">
+            <h1
+                class="text-7xl md:text-9xl font-display font-black tracking-tighter mb-4 leading-none uppercase dark:text-white">
+                ARCADLY
+            </h1>
+            <p
+                class="text-2xl md:text-3xl font-bold uppercase tracking-widest text-orange dark:text-yellow mb-8 underline decoration-4 decoration-black dark:decoration-white underline-offset-8">
+                Sky Hopper Official
+            </p>
+            <p
+                class="text-xl md:text-2xl text-black/70 dark:text-white/70 max-w-2xl mx-auto font-medium leading-relaxed italic border-x-4 border-black dark:border-white px-8">
+                Designing addictive, high-impact arcade experiences. Ready to soar?
+            </p>
+        </div>
+
+        <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6 mt-16" data-aos="fade-up"
+            data-aos-delay="400">
+            <a href="https://play.google.com/store/apps/details?id=com.srt.skyhopper"
+                class="neo-button bg-orange px-12 py-5 font-black text-2xl uppercase tracking-tight flex items-center justify-center dark:bg-black dark:text-white">
+                <i data-lucide="play" class="mr-3 fill-current"></i> PLAY NOW
+            </a>
+            <a href="#games"
+                class="neo-button bg-white px-12 py-5 font-black text-2xl uppercase tracking-tight flex items-center justify-center dark:bg-black dark:text-white">
+                FEATURES
+            </a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-32 px-4 bg-white dark:bg-black border-y-[6px] border-black transition-colors">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+                <!-- Feature 1 -->
+                <div class="bg-yellow neo-border neo-shadow p-8 flex flex-col items-center text-center group transition-transform hover:-translate-y-2"
+                    data-aos="fade-up" data-aos-delay="100">
+                    <div
+                        class="w-16 h-16 bg-white neo-border neo-shadow flex items-center justify-center mb-8 rotate-3 group-hover:-rotate-3 transition-transform">
+                        <i data-lucide="zap" size="32"></i>
+                    </div>
+                    <h3 class="text-2xl font-display font-black mb-4 uppercase">ONE-TAP</h3>
+                    <p class="font-bold text-black/80">Simple to learn, impossible to master mechanics.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-orange neo-border neo-shadow p-8 flex flex-col items-center text-center group transition-transform hover:-translate-y-2"
+                    data-aos="fade-up" data-aos-delay="200">
+                    <div
+                        class="w-16 h-16 bg-white neo-border neo-shadow flex items-center justify-center mb-8 -rotate-2 group-hover:rotate-2 transition-transform">
+                        <i data-lucide="layout" size="32"></i>
+                    </div>
+                    <h3 class="text-2xl font-display font-black mb-4 uppercase">LEVELS</h3>
+                    <p class="font-bold text-black/80">Procedurally generated worlds for infinite replay.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-blue neo-border neo-shadow p-8 flex flex-col items-center text-center text-white group transition-transform hover:-translate-y-2"
+                    data-aos="fade-up" data-aos-delay="300">
+                    <div
+                        class="w-16 h-16 bg-white neo-border neo-shadow flex items-center justify-center mb-8 rotate-6 group-hover:-rotate-6 transition-transform text-black">
+                        <i data-lucide="trophy" size="32"></i>
+                    </div>
+                    <h3 class="text-2xl font-display font-black mb-4 uppercase">GLOBAL</h3>
+                    <p class="font-bold text-white/90">Climb the leaderboards and prove your skills.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="bg-cream neo-border neo-shadow p-8 flex flex-col items-center text-center group transition-transform hover:-translate-y-2"
+                    data-aos="fade-up" data-aos-delay="400">
+                    <div
+                        class="w-16 h-16 bg-white neo-border neo-shadow flex items-center justify-center mb-8 -rotate-3 group-hover:rotate-3 transition-transform">
+                        <i data-lucide="sparkles" size="32"></i>
+                    </div>
+                    <h3 class="text-2xl font-display font-black mb-4 uppercase">RETRO</h3>
+                    <p class="font-bold text-black/80">Vibrant Neo-Retro aesthetic that pops.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Games Showcase -->
+    <section id="games" class="py-48 px-4 bg-black border-y-[6px] border-black relative overflow-hidden">
+        <!-- Arcade Grid Pattern -->
+        <div class="absolute inset-0 bg-[radial-gradient(#ffffff10_1px,transparent_1px)] [background-size:24px_24px]">
+        </div>
+
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-24" data-aos="fade-up">
+                <h2
+                    class="text-6xl md:text-8xl font-display font-black mb-6 uppercase tracking-tight text-white drop-shadow-[5px_5px_0px_#FF6B35]">
+                    THE <br><span class="bg-yellow text-black px-4 neo-border">TITLES</span></h2>
+                <p class="text-xl font-bold uppercase tracking-widest text-white/40 italic">More challenges from our
+                    lab.</p>
+            </div>
+
+            <div id="game-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                <!-- Dynamic content injected here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- The Dev Log (Blog) -->
+    <section id="devlog" class="py-32 px-4 bg-cream dark:bg-black transition-colors">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row items-center justify-between mb-20 gap-8" data-aos="fade-up">
+                <div>
+                    <h2
+                        class="text-5xl md:text-7xl font-display font-black uppercase italic leading-tight dark:text-white">
+                        THE <span class="bg-orange px-4 neo-border text-black">DEV LOG</span></h2>
+                    <p class="text-xl font-bold uppercase tracking-widest mt-4 text-black/50 dark:text-white/50 italic">
+                        Behind the scenes at Arcadly.</p>
+                </div>
+                <div class="w-32 h-3 bg-yellow neo-border"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <!-- Blog Post 1 -->
+                <article class="bg-white dark:bg-black neo-border neo-shadow p-8 flex flex-col md:flex-row gap-8 group"
+                    data-aos="fade-right">
+                    <div class="w-full md:w-48 h-48 bg-cream neo-border neo-shadow overflow-hidden flex-shrink-0">
+                        <img src="assets/screenshot4.jpg" alt="Orbit Rush Development"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform">
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-blue text-white text-[10px] font-black px-2 py-0.5 neo-border">UPDATE</span>
+                            <span class="text-xs font-bold text-black/40 dark:text-white/40 uppercase">April 11,
+                                2026</span>
+                        </div>
+                        <h3 class="text-2xl font-display font-black mb-3 uppercase dark:text-white leading-tight">Orbit
+                            Rush: Refining
+                            the Mechanics</h3>
+                        <p class="font-bold text-black/70 dark:text-white/70 mb-6 line-clamp-2">Working on the new orbit
+                            trajectory systems to make the gameplay feel as smooth as silk. New themes coming soon!</p>
+                        <a href="blog-post.html?id=orbit-rush-mechanics"
+                            class="text-orange font-black uppercase text-sm underline decoration-2 underline-offset-4 hover:text-black dark:hover:text-white transition-colors italic">Read
+                            More</a>
+                    </div>
+                </article>
+
+                <!-- Blog Post 2 -->
+                <article
+                    class="bg-white dark:bg-black neo-border neo-shadow p-8 flex flex-col md:flex-row gap-8 group rotate-1"
+                    data-aos="fade-left">
+                    <div class="w-full md:w-48 h-48 bg-yellow/20 neo-border neo-shadow overflow-hidden flex-shrink-0">
+                        <img src="assets/screenshot3.jpg" alt="New Themes"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform">
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span
+                                class="bg-yellow text-black text-[10px] font-black px-2 py-0.5 neo-border">PREVIEW</span>
+                            <span class="text-xs font-bold text-black/40 dark:text-white/40 uppercase">April 08,
+                                2026</span>
+                        </div>
+                        <h3 class="text-2xl font-display font-black mb-3 uppercase dark:text-white">Skin Systems are
+                            LIVE</h3>
+                        <p class="font-bold text-black/70 dark:text-white/70 mb-6 line-clamp-2">Just implemented a
+                            modular skinning system that allows us to drop-in new bird designs in seconds. Customization
+                            is king.</p>
+                        <a href="blog-post.html?id=skin-systems-live"
+                            class="text-orange font-black uppercase text-sm underline decoration-2 underline-offset-4 hover:text-black dark:hover:text-white transition-colors italic">Read
+                            More</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dev Lab (Tech Stack) -->
+    <section id="lab"
+        class="py-32 px-4 bg-blue dark:bg-black border-y-[6px] border-black text-white relative overflow-hidden transition-colors">
+        <div class="absolute inset-0 bg-pattern opacity-20"></div>
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="flex flex-col md:flex-row items-end justify-between mb-20 gap-8" data-aos="fade-up">
+                <div>
+                    <h2 class="text-5xl md:text-8xl font-display font-black uppercase italic leading-none">THE <br><span
+                            class="text-yellow">LAB</span></h2>
+                    <p
+                        class="text-xl font-bold uppercase tracking-widest mt-6 bg-white text-black px-4 py-1 inline-block neo-border">
+                        Our Power Sources</p>
+                </div>
+                <p class="max-w-md text-xl font-medium italic opacity-90 border-l-4 border-yellow pl-6">
+                    We combine high-performance code with artistic precision to build the next generation of arcade
+                    classics.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                <!-- Unity -->
+                <div class="bg-white neo-border neo-shadow p-6 text-black flex flex-col items-center justify-center group hover:-translate-y-2 transition-transform"
+                    data-aos="zoom-in" data-aos-delay="100">
+                    <i data-lucide="box" class="mb-4 text-orange"></i>
+                    <span class="font-black uppercase text-xs tracking-widest">UNITY</span>
+                </div>
+                <!-- C# -->
+                <div class="bg-white neo-border neo-shadow p-6 text-black flex flex-col items-center justify-center group hover:-translate-y-2 transition-transform rotate-2"
+                    data-aos="zoom-in" data-aos-delay="200">
+                    <i data-lucide="code-2" class="mb-4 text-blue"></i>
+                    <span class="font-black uppercase text-xs tracking-widest">C# CORE</span>
+                </div>
+                <!-- Ads -->
+                <div class="bg-white neo-border neo-shadow p-6 text-black flex flex-col items-center justify-center group hover:-translate-y-2 transition-transform -rotate-1"
+                    data-aos="zoom-in" data-aos-delay="300">
+                    <i data-lucide="dollar-sign" class="mb-4 text-yellow"></i>
+                    <span class="font-black uppercase text-xs tracking-widest">ADMOB</span>
+                </div>
+                <!-- Android -->
+                <div class="bg-white neo-border neo-shadow p-6 text-black flex flex-col items-center justify-center group hover:-translate-y-2 transition-transform"
+                    data-aos="zoom-in" data-aos-delay="400">
+                    <i data-lucide="smartphone" class="mb-4 text-orange"></i>
+                    <span class="font-black uppercase text-xs tracking-widest">ANDROID</span>
+                </div>
+                <!-- Performance -->
+                <div class="bg-white neo-border neo-shadow p-6 text-black flex flex-col items-center justify-center group hover:-translate-y-2 transition-transform rotate-3"
+                    data-aos="zoom-in" data-aos-delay="500">
+                    <i data-lucide="zap" class="mb-4 text-blue"></i>
+                    <span class="font-black uppercase text-xs tracking-widest">OPTIMIZED</span>
+                </div>
+                <!-- Support -->
+                <div class="bg-white neo-border neo-shadow p-6 text-black flex flex-col items-center justify-center group hover:-translate-y-2 transition-transform -rotate-2"
+                    data-aos="zoom-in" data-aos-delay="600">
+                    <i data-lucide="shield-check" class="mb-4 text-yellow"></i>
+                    <span class="font-black uppercase text-xs tracking-widest">SECURE</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Join the Squad (Newsletter) -->
+    <section id="community" class="py-32 px-4 bg-yellow dark:bg-black relative overflow-hidden transition-colors">
+        <div class="max-w-5xl mx-auto bg-white dark:bg-black neo-border neo-shadow-lg p-12 md:p-20 relative z-10 text-center dark:text-white"
+            data-aos="zoom-in">
+            <h2 class="text-5xl md:text-7xl font-display font-black uppercase mb-6 tracking-tighter italic">JOIN THE
+                <br><span
+                    class="text-orange underline decoration-[12px] decoration-black underline-offset-[-4px]">SQUAD</span>
+            </h2>
+            <p class="text-xl font-bold mb-12 max-w-xl mx-auto">Get notified when we drop new games, secret levels, and
+                Arcadly updates. No spam, just high-scores.</p>
+
+            <form id="newsletter-form" class="flex flex-col md:flex-row gap-4 max-w-2xl mx-auto">
+                <input type="email" placeholder="YOUR@EMAIL.COM" required
+                    class="flex-1 bg-cream dark:bg-black neo-border px-8 py-5 font-black placeholder-black/30 dark:placeholder-white/30 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 text-xl dark:text-white">
+                <button type="submit"
+                    class="neo-button bg-black text-white px-12 py-5 font-black text-xl uppercase tracking-widest hover:bg-orange hover:text-black transition-colors">
+                    SQUAD UP
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-24 px-4 border-t-[6px] border-black bg-white dark:bg-black dark:text-white transition-colors">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-16 items-center">
+            <div class="text-center md:text-left">
+                <h3 class="text-4xl font-display font-black mb-3 italic">ARCADLY</h3>
+                <p class="text-black/50 dark:text-white/50 text-sm font-bold uppercase tracking-widest">© 2026 Crafted
+                    for Champions.</p>
+            </div>
+
+            <div class="flex justify-center space-x-8">
+                <a href="index.html" class="font-black hover:text-orange">HOME</a>
+                <a href="privacy.html" class="font-black hover:text-orange">PRIVACY POLICY</a>
+                <a href="#games" class="font-black hover:text-orange">GAMES</a>
+            </div>
+
+            <div class="flex justify-center md:justify-end space-x-6">
+                <button onclick="copyEmail()"
+                    class="neo-button w-14 h-14 bg-yellow dark:bg-orange flex items-center justify-center group">
+                    <i data-lucide="mail"
+                        class="group-hover:scale-110 transition-transform text-black dark:text-black"></i>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize AOS
+        AOS.init({ duration: 1000, once: true, offset: 200 });
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Render Games with Neo-Brutalist Theme
+        function renderGames() {
+            const grid = document.getElementById('game-grid');
+            if (!grid) return;
+
+            gamesRegistry.forEach((game, index) => {
+                const isSkyHopper = game.id === 'sky-hopper';
+                const card = document.createElement(isSkyHopper ? 'a' : 'div');
+                if (isSkyHopper) card.href = 'sky-hopper.html';
+
+                card.className = `bg-white neo-border neo-shadow p-8 flex flex-col group transition-all hover:-translate-y-2 hover:bg-cream cursor-pointer`;
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', (index + 1) * 100);
+
+                const statusColor = game.status === 'LIVE NOW' ? 'bg-orange' : 'bg-blue text-white';
+
+                const iconContent = game.logo
+                    ? `<img src="${game.logo}" alt="${game.title}" class="w-full h-full object-cover rounded-lg">`
+                    : `<i data-lucide="${isSkyHopper ? 'bird' : 'orbit'}" size="40"></i>`;
+
+                card.innerHTML = `
+                    <div class="w-20 h-20 bg-white neo-border neo-shadow flex items-center justify-center mb-8 rotate-3 group-hover:-rotate-3 transition-transform overflow-hidden" style="color: ${game.accentColor}">
+                        ${iconContent}
+                    </div>
+                    <h3 class="text-3xl font-display font-black mb-4 uppercase tracking-tighter">${game.title}</h3>
+                    <p class="font-bold text-black/70 mb-8 leading-snug">${game.shortDesc}</p>
+                    <div class="mt-auto flex items-center justify-between">
+                        <span class="${statusColor} px-4 py-2 neo-border neo-shadow text-xs font-black uppercase tracking-widest">${game.status}</span>
+                        ${isSkyHopper ? '<i data-lucide="arrow-right" class="w-6 h-6"></i>' : ''}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        renderGames();
+
+        const newsletterForm = document.getElementById('newsletter-form');
+        if (newsletterForm) {
+            newsletterForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = newsletterForm.querySelector('input').value;
+                alert(`WELCOME TO THE SQUAD: ${email.toUpperCase()}!`);
+                newsletterForm.reset();
+            });
+        }
+
+        function copyEmail() {
+            const email = "skyhopper089@gmail.com";
+            navigator.clipboard.writeText(email).then(() => {
+                alert("Email copied to clipboard!");
+            });
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'dark' ||
+            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+</body>
+
+</html>
