@@ -5,20 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sky Hopper | Arcadly</title>
-    <!-- Tailwind CSS CDN -->
+    <meta name="description"
+        content="Sky Hopper — tap to flap and survive the obstacles. A one-tap arcade high-score chaser from Arcadly.">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&display=swap"
         rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Arcadly Games Data -->
-    <script src="js/games_registry.js"></script>
-    <script src="data/sky-hopper.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -42,7 +37,7 @@
             --card: rgba(255, 255, 255, .72);
             --line: rgba(8, 9, 13, .10);
             --line-strong: rgba(8, 9, 13, .16);
-            --glow: rgba(126, 224, 196, .22);
+            --glow: rgba(255, 180, 84, .22);
         }
 
         html.dark {
@@ -52,7 +47,7 @@
             --card: rgba(255, 255, 255, .035);
             --line: rgba(255, 255, 255, .08);
             --line-strong: rgba(255, 255, 255, .14);
-            --glow: rgba(126, 224, 196, .16);
+            --glow: rgba(255, 180, 84, .16);
         }
 
         * { -webkit-font-smoothing: antialiased; }
@@ -64,17 +59,7 @@
             overflow-x: hidden;
         }
 
-        /* ---------- Animated gradient mesh ----------
-           Three blurred blobs drifting on independent loops. Kept on a fixed,
-           pointer-transparent layer so it never intercepts a click and never
-           forces the page to scroll sideways. */
-        .mesh {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
+        .mesh { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
 
         .blob {
             position: absolute;
@@ -90,26 +75,14 @@
 
         html:not(.dark) .blob { opacity: .38; }
 
-        .blob-1 { background: #7EE0C4; top: -14vw; left: -8vw; animation: drift1 26s ease-in-out infinite; }
-        .blob-2 { background: #FFB454; top: -6vw; right: -10vw; animation: drift2 32s ease-in-out infinite; }
-        .blob-3 { background: #8B7CF6; top: 42vh; left: 30vw; opacity: .18; animation: drift3 38s ease-in-out infinite; }
+        .blob-1 { background: #FFB454; top: -14vw; left: -8vw; animation: drift1 26s ease-in-out infinite; }
+        .blob-2 { background: #FF6B35; top: -6vw; right: -10vw; animation: drift2 32s ease-in-out infinite; }
+        .blob-3 { background: #4ADE80; top: 42vh; left: 30vw; opacity: .16; animation: drift3 38s ease-in-out infinite; }
 
-        @keyframes drift1 {
-            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-            50%      { transform: translate3d(8vw, 6vh, 0) scale(1.15); }
-        }
+        @keyframes drift1 { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(8vw,6vh,0) scale(1.15); } }
+        @keyframes drift2 { 0%,100% { transform: translate3d(0,0,0) scale(1.1); } 50% { transform: translate3d(-7vw,9vh,0) scale(.9); } }
+        @keyframes drift3 { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(-10vw,-8vh,0) scale(1.2); } }
 
-        @keyframes drift2 {
-            0%, 100% { transform: translate3d(0, 0, 0) scale(1.1); }
-            50%      { transform: translate3d(-7vw, 9vh, 0) scale(.9); }
-        }
-
-        @keyframes drift3 {
-            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-            50%      { transform: translate3d(-10vw, -8vh, 0) scale(1.2); }
-        }
-
-        /* Fine film grain, so the large flat gradients do not band. */
         .grain {
             position: fixed;
             inset: 0;
@@ -121,9 +94,22 @@
 
         html:not(.dark) .grain { opacity: .18; }
 
-        main, nav, footer, header, section { position: relative; z-index: 2; }
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: .35;
+            background: repeating-linear-gradient(to bottom, rgba(255,255,255,.035) 0px, rgba(255,255,255,.035) 1px, transparent 1px, transparent 3px);
+        }
 
-        /* ---------- Cards with cursor spotlight ---------- */
+        html:not(.dark) .scanlines {
+            opacity: .12;
+            background: repeating-linear-gradient(to bottom, rgba(0,0,0,.04) 0px, rgba(0,0,0,.04) 1px, transparent 1px, transparent 3px);
+        }
+
+        nav, header, section, footer { position: relative; z-index: 2; }
+
         .card {
             position: relative;
             background: var(--card);
@@ -148,88 +134,16 @@
         .card:hover { border-color: var(--line-strong); transform: translateY(-3px); }
         .card:hover::before { opacity: 1; }
 
-        /* Gradient hairline along the top edge. */
-        .card::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 12%;
-            right: 12%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(126, 224, 196, .55), transparent);
-            opacity: 0;
-            transition: opacity .35s ease;
-        }
-
-        .card:hover::after { opacity: 1; }
-
         .grad {
-            background: linear-gradient(96deg, #FFE9A8 0%, #FFB454 38%, #7EE0C4 72%, #8B7CF6 100%);
+            background: linear-gradient(96deg, #FFE9A8 0%, #FFB454 40%, #FF6B35 75%, #4ADE80 100%);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
 
-        .chip {
-            border: 1px solid var(--line);
-            border-radius: 9999px;
-            background: var(--card);
-            backdrop-filter: blur(8px);
-        }
-
+        .chip { border: 1px solid var(--line); border-radius: 9999px; background: var(--card); backdrop-filter: blur(8px); }
         .muted { color: var(--muted); }
 
-
-        /* ---------- Scroll reveal ---------- */
-        .reveal {
-            opacity: 0;
-            transform: translateY(22px);
-            transition: opacity .7s cubic-bezier(.16, 1, .3, 1), transform .7s cubic-bezier(.16, 1, .3, 1);
-        }
-
-        .reveal.in { opacity: 1; transform: none; }
-
-        /* ---------- Marquee ---------- */
-        .marquee {
-            overflow: hidden;
-            mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-            -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-        }
-
-        .marquee-track { display: flex; gap: 3rem; width: max-content; animation: slide 28s linear infinite; }
-
-        @keyframes slide { to { transform: translateX(-50%); } }
-
-        @media (prefers-reduced-motion: reduce) {
-            .blob, .marquee-track { animation: none; }
-            .reveal { opacity: 1; transform: none; transition: none; }
-            .card { transition: none; }
-        }
-
-        /* ---------- Legacy classes, restyled ----------
-           js/games_registry.js and js/blog_registry.js still emit these class
-           names. Redefining them here means the injected markup picks up the
-           new design with no JavaScript changes. */
-        .neo-border { border: 1px solid var(--line) !important; border-radius: 1.25rem; }
-        .neo-shadow { box-shadow: 0 18px 44px -28px rgba(0, 0, 0, .55) !important; }
-        .neo-button { border: 1px solid var(--line); border-radius: .85rem; transition: all .25s ease; }
-        .neo-button:hover { border-color: var(--line-strong); }
-
-        .highlight {
-            background: var(--card);
-            border: 1px solid var(--line);
-            border-radius: 1.25rem;
-            box-shadow: none;
-            padding: 20px;
-            margin: 20px 0;
-            color: var(--fg);
-        }
-
-        .bg-cream { background: var(--card) !important; }
-        .text-black { color: var(--fg) !important; }
-        .font-display { font-family: 'Chakra Petch', sans-serif; font-weight: 700; text-transform: uppercase; }
-
-        /* ---------- Arcade treatment ---------- */
         .display {
             font-family: 'Chakra Petch', sans-serif;
             font-weight: 700;
@@ -238,58 +152,28 @@
             text-transform: uppercase;
         }
 
-        .score {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-            font-variant-numeric: tabular-nums;
-            letter-spacing: -0.02em;
-        }
+        .score { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-variant-numeric: tabular-nums; }
 
-        /* Buttons physically depress, the way an arcade cabinet button does. */
-        .btn-press { transition: transform .12s ease, box-shadow .12s ease, filter .2s ease; }
+        .btn-press { transition: transform .12s ease, filter .2s ease; }
         .btn-press:active { transform: translateY(2px) scale(.99); }
 
-        /* XP-style meter used for build progress on the game cards. */
-        .meter {
-            height: 6px;
-            border-radius: 9999px;
-            background: rgba(127, 127, 145, .22);
-            overflow: hidden;
+        .reveal {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1);
         }
 
-        .meter > i {
-            display: block;
-            height: 100%;
-            border-radius: 9999px;
-            background: linear-gradient(90deg, #7EE0C4, #FFB454);
-            box-shadow: 0 0 12px rgba(126, 224, 196, .55);
-        }
-
-        /* Faint CRT scanlines. Very low contrast so text stays crisp. */
-        .scanlines {
-            position: fixed;
-            inset: 0;
-            z-index: 1;
-            pointer-events: none;
-            opacity: .35;
-            background: repeating-linear-gradient(
-                to bottom,
-                rgba(255, 255, 255, .035) 0px,
-                rgba(255, 255, 255, .035) 1px,
-                transparent 1px,
-                transparent 3px);
-        }
-
-        html:not(.dark) .scanlines { opacity: .12; background: repeating-linear-gradient(
-                to bottom, rgba(0,0,0,.04) 0px, rgba(0,0,0,.04) 1px, transparent 1px, transparent 3px); }
+        .reveal.in { opacity: 1; transform: none; }
 
         @media (prefers-reduced-motion: reduce) {
-            .btn-press { transition: none; }
+            .blob { animation: none; }
+            .reveal { opacity: 1; transform: none; transition: none; }
+            .card, .btn-press { transition: none; }
         }
     </style>
 </head>
 
-<body class="font-sans antialiased overflow-x-hidden">
+<body class="font-sans">
 
     <div class="mesh" aria-hidden="true">
         <div class="blob blob-1"></div>
@@ -299,19 +183,18 @@
     <div class="grain" aria-hidden="true"></div>
     <div class="scanlines" aria-hidden="true"></div>
 
-    <!-- Navbar -->
     <nav class="fixed top-0 inset-x-0 z-50 px-4 pt-4">
         <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-5 py-3 rounded-2xl"
             style="background:var(--card); border:1px solid var(--line); backdrop-filter:blur(16px)">
             <a href="index.html" class="display text-lg">ARCADLY</a>
             <div class="hidden md:flex items-center gap-7 text-sm font-medium">
-                <a href="index.html#games" class="muted hover:text-mint transition-colors">Games</a>
-                <a href="index.html#devlog" class="muted hover:text-mint transition-colors">Dev Log</a>
-                <a href="index.html#stack" class="muted hover:text-mint transition-colors">Stack</a>
-                <a href="privacy.html" class="muted hover:text-mint transition-colors">Privacy</a>
+                <a href="index.html#games" class="muted hover:text-amber transition-colors">Games</a>
+                <a href="index.html#devlog" class="muted hover:text-amber transition-colors">Dev Log</a>
+                <a href="index.html#stack" class="muted hover:text-amber transition-colors">Stack</a>
+                <a href="privacy.html" class="muted hover:text-amber transition-colors">Privacy</a>
             </div>
             <button onclick="toggleTheme()" aria-label="Toggle theme"
-                class="w-9 h-9 rounded-xl flex items-center justify-center muted hover:text-mint transition-colors"
+                class="w-9 h-9 rounded-xl flex items-center justify-center muted hover:text-amber transition-colors"
                 style="border:1px solid var(--line)">
                 <i data-lucide="moon" class="dark:hidden w-4 h-4"></i>
                 <i data-lucide="sun" class="hidden dark:block w-4 h-4"></i>
@@ -319,147 +202,172 @@
         </div>
     </nav>
 
-    <!-- Game Hero -->
-    <section
-        class="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 pt-48 pb-32 overflow-hidden">
-        <div class="absolute inset-0 bg-pattern -z-10"></div>
+    <!-- HERO -->
+    <header class="px-4 pt-40 pb-20">
+        <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-14 items-center">
+            <div>
+                <span class="chip inline-flex items-center gap-2 px-4 py-1.5 text-xs font-medium muted">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber"></span> Developed by Arcadly
+                </span>
+                <h1 class="display mt-7 text-6xl md:text-8xl"><span class="grad">SKY HOPPER</span></h1>
+                <p class="mt-4 text-sm font-bold uppercase tracking-[0.28em] muted">Tap &middot; Fly &middot; Beat the
+                    high score</p>
+                <p class="mt-7 muted leading-relaxed text-lg">Tap to flap and survive the obstacles. Dive into our
+                    flagship high-score chaser.</p>
 
-        <div class="mb-8 relative" data-aos="zoom-in">
-            <div class="absolute -inset-2 bg-blue neo-border neo-shadow -z-10 -rotate-3"></div>
-            <img src="assets/Skyhopper.png" alt="Sky Hopper" class="w-48 md:w-64 h-auto neo-border neo-shadow rotate-2">
+                <div class="mt-9 flex flex-wrap gap-3">
+                    <a href="https://play.google.com/store/apps/details?id=com.srt.skyhopper"
+                        class="btn-press group px-7 py-3.5 rounded-xl font-semibold text-ink bg-amber hover:brightness-110 transition-all inline-flex items-center gap-2"
+                        style="box-shadow:0 18px 44px -20px rgba(255,180,84,.85)">
+                        Download now
+                        <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-0.5 transition-transform"></i>
+                    </a>
+                    <a href="privacy.html" class="px-7 py-3.5 rounded-xl font-medium muted hover:text-amber transition-colors"
+                        style="border:1px solid var(--line)">Privacy policy</a>
+                    <a href="app-ads.txt" class="px-7 py-3.5 rounded-xl font-medium muted hover:text-amber transition-colors"
+                        style="border:1px solid var(--line)">app-ads.txt</a>
+                </div>
+            </div>
+
+            <div class="card p-3">
+                <img src="assets/hero_banner.png" alt="Sky Hopper gameplay banner"
+                    class="w-full rounded-2xl" loading="lazy">
+            </div>
         </div>
+    </header>
 
-        <div data-aos="fade-up">
-            <p class="bg-yellow px-4 py-1 neo-border text-black inline-block font-black uppercase tracking-widest mb-4">
-                Developed by Arcadly</p>
-            <h1 class="text-6xl md:text-9xl font-display font-black tracking-tighter mb-6 uppercase italic">SKY HOPPER
-            </h1>
-        </div>
-
-        <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-6 mt-8"
-            data-aos="fade-up" data-aos-delay="200">
-            <a href="https://play.google.com/store/apps/details?id=com.srt.skyhopper"
-                class="neo-button bg-orange px-12 py-5 font-black text-2xl uppercase tracking-tight flex items-center justify-center w-full md:w-auto">
-                <i data-lucide="download" class="mr-3"></i> DOWNLOAD NOW
-            </a>
-
-            <div class="flex space-x-4 w-full md:w-auto justify-center">
-                <a href="privacy.html" class="neo-button bg-white px-6 py-5 font-bold text-sm flex items-center">
-                    <i data-lucide="shield-check" class="mr-2 w-5 h-5 text-orange"></i> PRIVACY POLICY
-                </a>
-                <a href="app-ads.txt" class="neo-button bg-white px-6 py-5 font-bold text-sm flex items-center">
-                    <i data-lucide="file-text" class="mr-2 w-5 h-5 text-blue"></i> APP-ADS.TXT
-                </a>
+    <!-- STATS -->
+    <section class="px-4 pb-24">
+        <div class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="card p-6 text-center">
+                <p class="score text-3xl grad">1</p>
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mt-2">Tap to play</p>
+            </div>
+            <div class="card p-6 text-center">
+                <p class="score text-3xl grad">&#8734;</p>
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mt-2">Procedural runs</p>
+            </div>
+            <div class="card p-6 text-center">
+                <p class="score text-3xl grad">2026</p>
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mt-2">Released</p>
+            </div>
+            <div class="card p-6 text-center">
+                <p class="score text-3xl grad">LIVE</p>
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mt-2">On Google Play</p>
             </div>
         </div>
     </section>
 
-    <!-- Game Info -->
-    <section class="py-32 px-4 bg-white border-y-[6px] border-black">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            <div data-aos="fade-right">
-                <h2 class="text-5xl font-display font-black mb-10 uppercase italic border-l-[12px] border-orange pl-8">
-                    About the <span class="bg-yellow px-3 neo-border">Game</span></h2>
-                <p class="text-xl font-bold leading-relaxed mb-8 text-black/80">
-                    Sky Hopper is the ultimate test of your reflexes and timing. In this high-flying arcade adventure,
-                    you control a vibrant bird navigating through a treacherous sky filled with obstacles.
-                </p>
-                <p class="text-lg font-medium leading-relaxed mb-10 border-black border-2 p-6 bg-cream neo-shadow">
-                    Master the "One-Tap" mechanics to soar between pipes and climb the global leaderboards. Every run is
-                    procedurally generated, ensuring no two flights are ever the same. Crafted with a vibrant neo-retro
-                    aesthetic that pops off the screen.
-                </p>
+    <!-- ABOUT -->
+    <section class="px-4 py-24" style="border-top:1px solid var(--line)">
+        <div class="max-w-3xl mx-auto">
+            <p class="text-xs font-semibold uppercase tracking-[0.28em] muted mb-5">About the game</p>
+            <h2 class="display text-4xl md:text-5xl mb-8">The ultimate test of <span class="grad">reflexes and
+                    timing.</span></h2>
+            <p class="text-lg muted leading-relaxed mb-5">Sky Hopper is the ultimate test of your reflexes and timing. In
+                this high-flying arcade adventure, you control a vibrant bird navigating through a treacherous sky
+                filled with obstacles.</p>
+            <p class="text-lg muted leading-relaxed">Master the one-tap mechanics to soar between pipes and climb the
+                global leaderboards. Every run is procedurally generated, ensuring no two flights are ever the same.
+                Crafted with a vibrant neo-retro aesthetic that pops off the screen.</p>
+        </div>
+    </section>
 
-                <div class="grid grid-cols-2 gap-8">
-                    <div class="bg-blue/10 neo-border neo-shadow p-6">
-                        <h4 class="text-black font-black uppercase text-xs tracking-[0.2em] mb-2">Publisher</h4>
-                        <p class="text-black font-black text-xl">Arcadly</p>
-                    </div>
-                    <div class="bg-orange/10 neo-border neo-shadow p-6">
-                        <h4 class="text-black font-black uppercase text-xs tracking-[0.2em] mb-2">Release Date</h4>
-                        <p class="text-black font-black text-xl">2026</p>
-                    </div>
+    <!-- FEATURES -->
+    <section class="px-4 pb-28">
+        <div class="max-w-5xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="card p-7 reveal">
+                <div class="w-11 h-11 rounded-xl grid place-items-center mb-5" style="background:rgba(255,180,84,.14)">
+                    <i data-lucide="zap" class="w-5 h-5 text-amber"></i>
                 </div>
+                <h3 class="display text-xl mb-2">One-Tap Mastery</h3>
+                <p class="text-sm muted leading-relaxed">Perfected touch controls that respond to your every move.
+                    Precision is key.</p>
             </div>
-
-            <!-- Media Section -->
-            <div class="relative" data-aos="fade-left">
-                <div class="absolute -inset-4 bg-yellow neo-border neo-shadow -z-10 rotate-2"></div>
-                <div
-                    class="bg-white neo-border neo-shadow p-2 overflow-hidden -rotate-1 hover:rotate-0 transition-transform cursor-pointer">
-                    <div class="relative aspect-video bg-black flex items-center justify-center">
-                        <img src="assets/hero_banner.png" alt="Trailer"
-                            class="absolute inset-0 w-full h-full object-cover opacity-50">
-                        <div
-                            class="neo-button w-24 h-24 bg-orange rounded-full flex items-center justify-center text-black">
-                            <i data-lucide="play" size="40" class="ml-1"></i>
-                        </div>
-                    </div>
+            <div class="card p-7 reveal">
+                <div class="w-11 h-11 rounded-xl grid place-items-center mb-5" style="background:rgba(126,224,196,.14)">
+                    <i data-lucide="layout" class="w-5 h-5 text-mint"></i>
                 </div>
+                <h3 class="display text-xl mb-2">Procedural Worlds</h3>
+                <p class="text-sm muted leading-relaxed">Never play the same game twice. Unique obstacle patterns every
+                    time.</p>
+            </div>
+            <div class="card p-7 reveal">
+                <div class="w-11 h-11 rounded-xl grid place-items-center mb-5" style="background:rgba(255,180,84,.14)">
+                    <i data-lucide="trophy" class="w-5 h-5 text-amber"></i>
+                </div>
+                <h3 class="display text-xl mb-2">Global Leaderboards</h3>
+                <p class="text-sm muted leading-relaxed">Compete against the world. Climb the ranks and prove your
+                    skills.</p>
+            </div>
+            <div class="card p-7 reveal">
+                <div class="w-11 h-11 rounded-xl grid place-items-center mb-5" style="background:rgba(139,124,246,.15)">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-violet"></i>
+                </div>
+                <h3 class="display text-xl mb-2">Retro-Modern Visuals</h3>
+                <p class="text-sm muted leading-relaxed">A perfect blend of classic arcade aesthetics and modern
+                    effects.</p>
             </div>
         </div>
     </section>
 
-    <!-- Gallery -->
-    <section class="py-32 px-4">
-        <div class="max-w-7xl mx-auto">
-            <div class="mb-16" data-aos="fade-up">
-                <h2 class="text-5xl font-display font-black mb-4 uppercase italic">Gallery</h2>
-                <div class="w-32 h-3 bg-orange neo-border"></div>
+    <!-- GALLERY -->
+    <section class="px-4 pb-28" style="border-top:1px solid var(--line)">
+        <div class="max-w-6xl mx-auto pt-28">
+            <div class="mb-12">
+                <p class="text-xs font-semibold uppercase tracking-[0.28em] muted mb-5">Gallery</p>
+                <h2 class="display text-4xl md:text-5xl">See it in flight.</h2>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Screenshot 1 -->
-                <div class="bg-white neo-border neo-shadow overflow-hidden group hover:-translate-y-2 transition-transform"
-                    data-aos="fade-up" data-aos-delay="100">
-                    <div class="aspect-[9/16] relative overflow-hidden">
-                        <img src="assets/screenshot3.jpg" alt="Sky Hopper Gameplay 1"
-                            class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                </div>
-                <!-- Screenshot 2 -->
-                <div class="bg-white neo-border neo-shadow overflow-hidden group hover:-translate-y-2 transition-transform rotate-2 hover:rotate-0"
-                    data-aos="fade-up" data-aos-delay="200">
-                    <div class="aspect-[9/16] relative overflow-hidden">
-                        <img src="assets/screenshot4.jpg" alt="Sky Hopper Gameplay 2"
-                            class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                </div>
-                <!-- Screenshot 3 -->
-                <div class="bg-white neo-border neo-shadow overflow-hidden group hover:-translate-y-2 transition-transform -rotate-1 hover:rotate-0"
-                    data-aos="fade-up" data-aos-delay="300">
-                    <div class="aspect-[9/16] relative overflow-hidden">
-                        <img src="assets/screenshot2.jpg" alt="Sky Hopper Gameplay 3"
-                            class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                </div>
-                <!-- Screenshot 4 -->
-                <div class="bg-white neo-border neo-shadow overflow-hidden group hover:-translate-y-2 transition-transform rotate-1 hover:rotate-0"
-                    data-aos="fade-up" data-aos-delay="400">
-                    <div class="aspect-[9/16] relative overflow-hidden">
-                        <img src="assets/screenshot1.jpg" alt="Sky Hopper Gameplay 4"
-                            class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="card p-2 reveal"><img src="assets/screenshot1.jpg" alt="Sky Hopper screenshot"
+                        class="w-full rounded-2xl" loading="lazy"></div>
+                <div class="card p-2 reveal"><img src="assets/screenshot2.jpg" alt="Sky Hopper screenshot"
+                        class="w-full rounded-2xl" loading="lazy"></div>
+                <div class="card p-2 reveal"><img src="assets/screenshot3.jpg" alt="Sky Hopper screenshot"
+                        class="w-full rounded-2xl" loading="lazy"></div>
+                <div class="card p-2 reveal"><img src="assets/screenshot4.jpg" alt="Sky Hopper screenshot"
+                        class="w-full rounded-2xl" loading="lazy"></div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="py-24 px-4 border-t-[6px] border-black bg-white">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
-            <h3 class="text-4xl font-display font-black mb-8 md:mb-0 italic uppercase">ARCADLY</h3>
-            <div class="flex space-x-12 font-black uppercase tracking-widest text-sm">
-                <a href="index.html" class="hover:text-orange">Home</a>
-                <a href="privacy.html" class="hover:text-orange">Privacy</a>
-                <a href="mailto:skyhopper089@gmail.com" class="hover:text-orange">Support</a>
+    <!-- DETAILS -->
+    <section class="px-4 pb-28">
+        <div class="max-w-5xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="card p-6">
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mb-2">Publisher</p>
+                <p class="display text-lg">Arcadly</p>
+            </div>
+            <div class="card p-6">
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mb-2">Release date</p>
+                <p class="display text-lg">2026</p>
+            </div>
+            <div class="card p-6">
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mb-2">Platform</p>
+                <p class="display text-lg">Android</p>
+            </div>
+            <div class="card p-6">
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mb-2">Genre</p>
+                <p class="display text-lg">Arcade</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="px-4 py-14" style="border-top:1px solid var(--line)">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="text-center md:text-left">
+                <p class="display text-lg">ARCADLY</p>
+                <p class="text-sm muted mt-1">&copy; 2026 Crafted for Champions.</p>
+            </div>
+            <div class="flex flex-wrap justify-center items-center gap-6 text-sm">
+                <a href="index.html" class="muted hover:text-amber transition-colors">Home</a>
+                <a href="privacy.html" class="muted hover:text-amber transition-colors">Privacy</a>
+                <a href="mailto:skyhopper089@gmail.com" class="muted hover:text-amber transition-colors">Support</a>
             </div>
         </div>
     </footer>
 
     <script>
-        const game = gamesRegistry.find(g => g.id === 'sky-hopper');
-        if (game) { document.title = `${game.title} | Arcadly`; }
         lucide.createIcons();
 
         function toggleTheme() {
@@ -467,10 +375,12 @@
             html.classList.toggle('dark');
             localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
         }
+        // Dark is the default; only an explicit choice selects light.
         if (localStorage.getItem('theme') === 'light') {
             document.documentElement.classList.remove('dark');
         }
-        document.querySelectorAll('.card, .neo-border').forEach((el) => {
+
+        document.querySelectorAll('.card').forEach((el) => {
             el.addEventListener('pointermove', (e) => {
                 const r = el.getBoundingClientRect();
                 el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
@@ -478,7 +388,20 @@
             });
         });
 
-        AOS.init({ duration: 1000, once: true });
+        const items = document.querySelectorAll('.reveal');
+        if ('IntersectionObserver' in window) {
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach((e, i) => {
+                    if (!e.isIntersecting) return;
+                    e.target.style.transitionDelay = (i * 60) + 'ms';
+                    e.target.classList.add('in');
+                    io.unobserve(e.target);
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+            items.forEach((el) => io.observe(el));
+        } else {
+            items.forEach((el) => el.classList.add('in'));
+        }
     </script>
 </body>
 
