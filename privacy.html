@@ -17,38 +17,234 @@
             darkMode: 'class',
             theme: {
                 extend: {
-                    colors: { ink: '#0B0E17', mint: '#7EE0C4', amber: '#FFB454' },
+                    colors: { ink: '#08090D', mint: '#7EE0C4', amber: '#FFB454', violet: '#8B7CF6' },
                     fontFamily: { sans: ['Space Grotesk', 'sans-serif'], display: ['Syne', 'sans-serif'] }
                 }
             }
         }
     </script>
     <style>
-        :root { --bg:#FAFAF8; --fg:#0B0E17; --muted:#5B6478; --card:#FFFFFF; --line:rgba(11,14,23,.10); }
-        html.dark { --bg:#0B0E17; --fg:#EEF1FB; --muted:#8992AC; --card:rgba(255,255,255,.04); --line:rgba(255,255,255,.09); }
-        body { background:var(--bg); color:var(--fg); transition:background-color .4s ease,color .4s ease; -webkit-font-smoothing:antialiased; }
-        .aurora { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
-        .aurora::before { content:""; position:absolute; width:40rem; height:40rem; border-radius:9999px; filter:blur(120px); opacity:.24; background:#FFB454; top:-16rem; left:-10rem; }
-        .card { background:var(--card); border:1px solid var(--line); border-radius:1.25rem; }
-        .grad { background:linear-gradient(92deg,#FFE9A8 0%,#FFB454 45%,#7EE0C4 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
-        .chip { border:1px solid var(--line); border-radius:9999px; background:var(--card); }
-        .muted { color:var(--muted); }
-        .sec p, .sec li { color:var(--muted); line-height:1.75; }
-        .sec strong { color:var(--fg); }
-        .sec a { color:#7EE0C4; text-decoration:underline; text-underline-offset:3px; }
+        :root {
+            --bg: #FBFBFA;
+            --fg: #08090D;
+            --muted: #61667A;
+            --card: rgba(255, 255, 255, .72);
+            --line: rgba(8, 9, 13, .10);
+            --line-strong: rgba(8, 9, 13, .16);
+            --glow: rgba(126, 224, 196, .22);
+        }
+
+        html.dark {
+            --bg: #08090D;
+            --fg: #F3F5FA;
+            --muted: #8A90A6;
+            --card: rgba(255, 255, 255, .035);
+            --line: rgba(255, 255, 255, .08);
+            --line-strong: rgba(255, 255, 255, .14);
+            --glow: rgba(126, 224, 196, .16);
+        }
+
+        * { -webkit-font-smoothing: antialiased; }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            transition: background-color .4s ease, color .4s ease;
+            overflow-x: hidden;
+        }
+
+        /* ---------- Animated gradient mesh ----------
+           Three blurred blobs drifting on independent loops. Kept on a fixed,
+           pointer-transparent layer so it never intercepts a click and never
+           forces the page to scroll sideways. */
+        .mesh {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            width: 42vw;
+            height: 42vw;
+            min-width: 380px;
+            min-height: 380px;
+            border-radius: 9999px;
+            filter: blur(90px);
+            opacity: .30;
+            will-change: transform;
+        }
+
+        html:not(.dark) .blob { opacity: .38; }
+
+        .blob-1 { background: #7EE0C4; top: -14vw; left: -8vw; animation: drift1 26s ease-in-out infinite; }
+        .blob-2 { background: #FFB454; top: -6vw; right: -10vw; animation: drift2 32s ease-in-out infinite; }
+        .blob-3 { background: #8B7CF6; top: 42vh; left: 30vw; opacity: .18; animation: drift3 38s ease-in-out infinite; }
+
+        @keyframes drift1 {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+            50%      { transform: translate3d(8vw, 6vh, 0) scale(1.15); }
+        }
+
+        @keyframes drift2 {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1.1); }
+            50%      { transform: translate3d(-7vw, 9vh, 0) scale(.9); }
+        }
+
+        @keyframes drift3 {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+            50%      { transform: translate3d(-10vw, -8vh, 0) scale(1.2); }
+        }
+
+        /* Fine film grain, so the large flat gradients do not band. */
+        .grain {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: .30;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
+        }
+
+        html:not(.dark) .grain { opacity: .18; }
+
+        main, nav, footer, header, section { position: relative; z-index: 2; }
+
+        /* ---------- Cards with cursor spotlight ---------- */
+        .card {
+            position: relative;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            transition: border-color .3s ease, transform .3s ease;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity .35s ease;
+            background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 65%);
+            pointer-events: none;
+        }
+
+        .card:hover { border-color: var(--line-strong); transform: translateY(-3px); }
+        .card:hover::before { opacity: 1; }
+
+        /* Gradient hairline along the top edge. */
+        .card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 12%;
+            right: 12%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(126, 224, 196, .55), transparent);
+            opacity: 0;
+            transition: opacity .35s ease;
+        }
+
+        .card:hover::after { opacity: 1; }
+
+        .grad {
+            background: linear-gradient(96deg, #FFE9A8 0%, #FFB454 38%, #7EE0C4 72%, #8B7CF6 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .chip {
+            border: 1px solid var(--line);
+            border-radius: 9999px;
+            background: var(--card);
+            backdrop-filter: blur(8px);
+        }
+
+        .muted { color: var(--muted); }
+
+        .display {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            letter-spacing: -0.035em;
+            line-height: .92;
+        }
+
+        /* ---------- Scroll reveal ---------- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity .7s cubic-bezier(.16, 1, .3, 1), transform .7s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .reveal.in { opacity: 1; transform: none; }
+
+        /* ---------- Marquee ---------- */
+        .marquee {
+            overflow: hidden;
+            mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+        }
+
+        .marquee-track { display: flex; gap: 3rem; width: max-content; animation: slide 28s linear infinite; }
+
+        @keyframes slide { to { transform: translateX(-50%); } }
+
+        @media (prefers-reduced-motion: reduce) {
+            .blob, .marquee-track { animation: none; }
+            .reveal { opacity: 1; transform: none; transition: none; }
+            .card { transition: none; }
+        }
+
+        /* ---------- Policy document typography ---------- */
+        .sec p, .sec li { color: var(--muted); line-height: 1.75; }
+        .sec strong { color: var(--fg); }
+        .sec a { color: #7EE0C4; text-decoration: underline; text-underline-offset: 3px; }
+
+        /* Long tables scroll inside their own container so the page body never
+           scrolls sideways on a phone. */
+        .tbl { width: 100%; border-collapse: collapse; font-size: .9rem; }
+
+        .tbl th, .tbl td {
+            border: 1px solid var(--line);
+            padding: .7rem .85rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .tbl th {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: .72rem;
+            letter-spacing: .08em;
+            color: var(--muted);
+        }
     </style>
 </head>
 
 <body class="font-sans">
 
+    <div class="mesh" aria-hidden="true">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+    <div class="grain" aria-hidden="true"></div>
+
     <nav class="fixed top-0 inset-x-0 z-50 px-4 pt-4">
         <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-5 py-3 rounded-2xl backdrop-blur-xl"
             style="background:var(--card); border:1px solid var(--line)">
-            <a href="index.html" class="font-display font-extrabold tracking-tight text-lg">ARCADLY</a>
+            <a href="index.html" class="display text-lg">ARCADLY</a>
             <div class="hidden md:flex items-center gap-7 text-sm font-semibold">
-                <a href="index.html#hero" class="hover:text-mint transition-colors">Home</a>
-                <a href="index.html#games" class="hover:text-mint transition-colors">Games</a>
-                <a href="index.html#devlog" class="hover:text-mint transition-colors">Dev Log</a>
+                <a href="index.html#hero" class="muted hover:text-mint transition-colors">Home</a>
+                <a href="index.html#games" class="muted hover:text-mint transition-colors">Games</a>
+                <a href="index.html#devlog" class="muted hover:text-mint transition-colors">Dev Log</a>
             </div>
             <button onclick="toggleTheme()" aria-label="Toggle theme"
                 class="w-10 h-10 rounded-xl flex items-center justify-center hover:text-mint transition-colors"
@@ -60,7 +256,6 @@
     </nav>
 
     <main class="relative pt-36 pb-28 px-4">
-        <div class="aurora"></div>
         <div class="max-w-3xl mx-auto relative">
 
             <a href="index.html"
@@ -69,7 +264,7 @@
             </a>
 
             <span class="chip inline-block px-4 py-1.5 text-xs font-semibold muted">Last updated: 03 March 2026</span>
-            <h1 class="mt-6 font-display font-extrabold text-5xl md:text-6xl tracking-tight leading-[1.05]">
+            <h1 class="mt-6 display text-5xl md:text-6xl tracking-tight leading-[1.05]">
                 Privacy <span class="grad">Policy</span>
             </h1>
             <p class="mt-4 text-lg font-semibold">Sky Hopper</p>
@@ -88,7 +283,7 @@
             <div class="mt-12 space-y-12 sec">
 
                 <section>
-                    <h2 class="font-display font-extrabold text-2xl mb-4">1. Third-party advertising services</h2>
+                    <h2 class="display text-2xl mb-4">1. Third-party advertising services</h2>
                     <p class="mb-4">Sky Hopper uses third-party advertising services to display ads within the game.
                         These advertising networks may automatically collect certain information from your device for
                         advertising and analytics purposes.</p>
@@ -97,7 +292,7 @@
 
                     <div class="grid sm:grid-cols-2 gap-4">
                         <div class="card p-6">
-                            <h3 class="font-display font-extrabold text-lg mb-3">Google AdMob</h3>
+                            <h3 class="display text-lg mb-3">Google AdMob</h3>
                             <ul class="list-disc ml-5 space-y-1.5 text-sm">
                                 <li>Device information</li>
                                 <li>Advertising ID</li>
@@ -110,7 +305,7 @@
                                 info <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
                         </div>
                         <div class="card p-6">
-                            <h3 class="font-display font-extrabold text-lg mb-3">Unity Ads</h3>
+                            <h3 class="display text-lg mb-3">Unity Ads</h3>
                             <ul class="list-disc ml-5 space-y-1.5 text-sm">
                                 <li>Device information</li>
                                 <li>Advertising ID</li>
@@ -126,7 +321,7 @@
                 </section>
 
                 <section>
-                    <h2 class="font-display font-extrabold text-2xl mb-4">2. GDPR &amp; European users</h2>
+                    <h2 class="display text-2xl mb-4">2. GDPR &amp; European users</h2>
                     <p class="mb-4">If you are located in the European Economic Area (EEA), we comply with the General
                         Data Protection Regulation (GDPR).</p>
                     <p>Users located in the EEA may be presented with a consent request before personalized
@@ -135,7 +330,7 @@
                 </section>
 
                 <section>
-                    <h2 class="font-display font-extrabold text-2xl mb-4">3. How information is used</h2>
+                    <h2 class="display text-2xl mb-4">3. How information is used</h2>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
                         <div class="card p-5 text-center">
                             <i data-lucide="megaphone" class="w-5 h-5 mx-auto mb-3 text-mint"></i>
@@ -157,13 +352,13 @@
                 </section>
 
                 <section>
-                    <h2 class="font-display font-extrabold text-2xl mb-4">4. Advertising identifiers</h2>
+                    <h2 class="display text-2xl mb-4">4. Advertising identifiers</h2>
                     <p>Our app may use the advertising identifier of your device (such as the Google Advertising ID) to
                         show relevant advertisements. You can reset or limit this through your device settings.</p>
                 </section>
 
                 <section>
-                    <h2 class="font-display font-extrabold text-2xl mb-4">5. Children and privacy</h2>
+                    <h2 class="display text-2xl mb-4">5. Children and privacy</h2>
                     <p class="mb-4">Sky Hopper is designed for a general audience and is not specifically directed to
                         children under 13.</p>
                     <p>We do not knowingly collect personal information from children under the age of 13. If you
@@ -172,12 +367,12 @@
 
                 <div class="grid sm:grid-cols-2 gap-8">
                     <section>
-                        <h2 class="font-display font-extrabold text-2xl mb-4">6. Data security</h2>
+                        <h2 class="display text-2xl mb-4">6. Data security</h2>
                         <p>We take reasonable steps to protect information. However, no method of transmission is 100%
                             secure.</p>
                     </section>
                     <section>
-                        <h2 class="font-display font-extrabold text-2xl mb-4">7. Changes</h2>
+                        <h2 class="display text-2xl mb-4">7. Changes</h2>
                         <p>We may update this Privacy Policy from time to time. Updates will be posted on this page.</p>
                     </section>
                 </div>
@@ -188,7 +383,7 @@
                 <p class="text-sm font-bold uppercase tracking-[0.18em] muted mb-3">Contact</p>
                 <p class="muted mb-3">Questions about this policy?</p>
                 <a href="mailto:skyhopper089@gmail.com"
-                    class="font-display font-extrabold text-xl grad">skyhopper089@gmail.com</a>
+                    class="display text-xl grad">skyhopper089@gmail.com</a>
             </div>
 
             <p class="text-center text-sm muted mt-12">&copy; 2026 Sky Hopper. All rights reserved.</p>
@@ -197,6 +392,15 @@
 
     <script>
         lucide.createIcons();
+
+        document.querySelectorAll('.card').forEach((el) => {
+            el.addEventListener('pointermove', (e) => {
+                const r = el.getBoundingClientRect();
+                el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+                el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+            });
+        });
+
         function toggleTheme() {
             const html = document.documentElement;
             html.classList.toggle('dark');

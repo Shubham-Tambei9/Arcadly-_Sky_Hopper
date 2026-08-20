@@ -17,43 +17,234 @@
             darkMode: 'class',
             theme: {
                 extend: {
-                    colors: { ink: '#0B0E17', mint: '#7EE0C4', amber: '#FFB454' },
+                    colors: { ink: '#08090D', mint: '#7EE0C4', amber: '#FFB454', violet: '#8B7CF6' },
                     fontFamily: { sans: ['Space Grotesk', 'sans-serif'], display: ['Syne', 'sans-serif'] }
                 }
             }
         }
     </script>
     <style>
-        :root { --bg:#FAFAF8; --fg:#0B0E17; --muted:#5B6478; --card:#FFFFFF; --line:rgba(11,14,23,.10); }
-        html.dark { --bg:#0B0E17; --fg:#EEF1FB; --muted:#8992AC; --card:rgba(255,255,255,.04); --line:rgba(255,255,255,.09); }
-        body { background:var(--bg); color:var(--fg); transition:background-color .4s ease,color .4s ease; -webkit-font-smoothing:antialiased; }
-        .aurora { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
-        .aurora::before { content:""; position:absolute; width:40rem; height:40rem; border-radius:9999px; filter:blur(120px); opacity:.26; background:#7EE0C4; top:-16rem; left:-10rem; }
-        .card { background:var(--card); border:1px solid var(--line); border-radius:1.25rem; }
-        .grad { background:linear-gradient(92deg,#FFE9A8 0%,#FFB454 45%,#7EE0C4 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
-        .chip { border:1px solid var(--line); border-radius:9999px; background:var(--card); }
-        .muted { color:var(--muted); }
+        :root {
+            --bg: #FBFBFA;
+            --fg: #08090D;
+            --muted: #61667A;
+            --card: rgba(255, 255, 255, .72);
+            --line: rgba(8, 9, 13, .10);
+            --line-strong: rgba(8, 9, 13, .16);
+            --glow: rgba(126, 224, 196, .22);
+        }
+
+        html.dark {
+            --bg: #08090D;
+            --fg: #F3F5FA;
+            --muted: #8A90A6;
+            --card: rgba(255, 255, 255, .035);
+            --line: rgba(255, 255, 255, .08);
+            --line-strong: rgba(255, 255, 255, .14);
+            --glow: rgba(126, 224, 196, .16);
+        }
+
+        * { -webkit-font-smoothing: antialiased; }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            transition: background-color .4s ease, color .4s ease;
+            overflow-x: hidden;
+        }
+
+        /* ---------- Animated gradient mesh ----------
+           Three blurred blobs drifting on independent loops. Kept on a fixed,
+           pointer-transparent layer so it never intercepts a click and never
+           forces the page to scroll sideways. */
+        .mesh {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            width: 42vw;
+            height: 42vw;
+            min-width: 380px;
+            min-height: 380px;
+            border-radius: 9999px;
+            filter: blur(90px);
+            opacity: .30;
+            will-change: transform;
+        }
+
+        html:not(.dark) .blob { opacity: .38; }
+
+        .blob-1 { background: #7EE0C4; top: -14vw; left: -8vw; animation: drift1 26s ease-in-out infinite; }
+        .blob-2 { background: #FFB454; top: -6vw; right: -10vw; animation: drift2 32s ease-in-out infinite; }
+        .blob-3 { background: #8B7CF6; top: 42vh; left: 30vw; opacity: .18; animation: drift3 38s ease-in-out infinite; }
+
+        @keyframes drift1 {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+            50%      { transform: translate3d(8vw, 6vh, 0) scale(1.15); }
+        }
+
+        @keyframes drift2 {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1.1); }
+            50%      { transform: translate3d(-7vw, 9vh, 0) scale(.9); }
+        }
+
+        @keyframes drift3 {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+            50%      { transform: translate3d(-10vw, -8vh, 0) scale(1.2); }
+        }
+
+        /* Fine film grain, so the large flat gradients do not band. */
+        .grain {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: .30;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
+        }
+
+        html:not(.dark) .grain { opacity: .18; }
+
+        main, nav, footer, header, section { position: relative; z-index: 2; }
+
+        /* ---------- Cards with cursor spotlight ---------- */
+        .card {
+            position: relative;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            transition: border-color .3s ease, transform .3s ease;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity .35s ease;
+            background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 65%);
+            pointer-events: none;
+        }
+
+        .card:hover { border-color: var(--line-strong); transform: translateY(-3px); }
+        .card:hover::before { opacity: 1; }
+
+        /* Gradient hairline along the top edge. */
+        .card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 12%;
+            right: 12%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(126, 224, 196, .55), transparent);
+            opacity: 0;
+            transition: opacity .35s ease;
+        }
+
+        .card:hover::after { opacity: 1; }
+
+        .grad {
+            background: linear-gradient(96deg, #FFE9A8 0%, #FFB454 38%, #7EE0C4 72%, #8B7CF6 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .chip {
+            border: 1px solid var(--line);
+            border-radius: 9999px;
+            background: var(--card);
+            backdrop-filter: blur(8px);
+        }
+
+        .muted { color: var(--muted); }
+
+        .display {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            letter-spacing: -0.035em;
+            line-height: .92;
+        }
+
+        /* ---------- Scroll reveal ---------- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity .7s cubic-bezier(.16, 1, .3, 1), transform .7s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .reveal.in { opacity: 1; transform: none; }
+
+        /* ---------- Marquee ---------- */
+        .marquee {
+            overflow: hidden;
+            mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+        }
+
+        .marquee-track { display: flex; gap: 3rem; width: max-content; animation: slide 28s linear infinite; }
+
+        @keyframes slide { to { transform: translateX(-50%); } }
+
+        @media (prefers-reduced-motion: reduce) {
+            .blob, .marquee-track { animation: none; }
+            .reveal { opacity: 1; transform: none; transition: none; }
+            .card { transition: none; }
+        }
+
+        /* ---------- Policy document typography ---------- */
+        .sec p, .sec li { color: var(--muted); line-height: 1.75; }
+        .sec strong { color: var(--fg); }
+        .sec a { color: #7EE0C4; text-decoration: underline; text-underline-offset: 3px; }
+
         /* Long tables scroll inside their own container so the page body never
            scrolls sideways on a phone. */
-        .tbl { width:100%; border-collapse:collapse; font-size:.9rem; }
-        .tbl th, .tbl td { border:1px solid var(--line); padding:.7rem .85rem; text-align:left; vertical-align:top; }
-        .tbl th { font-family:'Syne',sans-serif; font-weight:800; text-transform:uppercase; font-size:.72rem; letter-spacing:.08em; color:var(--muted); }
-        .sec p, .sec li { color:var(--muted); line-height:1.75; }
-        .sec strong { color:var(--fg); }
-        .sec a { color:#7EE0C4; text-decoration:underline; text-underline-offset:3px; }
+        .tbl { width: 100%; border-collapse: collapse; font-size: .9rem; }
+
+        .tbl th, .tbl td {
+            border: 1px solid var(--line);
+            padding: .7rem .85rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .tbl th {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: .72rem;
+            letter-spacing: .08em;
+            color: var(--muted);
+        }
     </style>
 </head>
 
 <body class="font-sans">
 
+    <div class="mesh" aria-hidden="true">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+    <div class="grain" aria-hidden="true"></div>
+
     <nav class="fixed top-0 inset-x-0 z-50 px-4 pt-4">
         <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-5 py-3 rounded-2xl backdrop-blur-xl"
             style="background:var(--card); border:1px solid var(--line)">
-            <a href="index.html" class="font-display font-extrabold tracking-tight text-lg">ARCADLY</a>
+            <a href="index.html" class="display text-lg">ARCADLY</a>
             <div class="hidden md:flex items-center gap-7 text-sm font-semibold">
-                <a href="index.html#hero" class="hover:text-mint transition-colors">Home</a>
-                <a href="index.html#games" class="hover:text-mint transition-colors">Games</a>
-                <a href="index.html#devlog" class="hover:text-mint transition-colors">Dev Log</a>
+                <a href="index.html#hero" class="muted hover:text-mint transition-colors">Home</a>
+                <a href="index.html#games" class="muted hover:text-mint transition-colors">Games</a>
+                <a href="index.html#devlog" class="muted hover:text-mint transition-colors">Dev Log</a>
             </div>
             <button onclick="toggleTheme()" aria-label="Toggle theme"
                 class="w-10 h-10 rounded-xl flex items-center justify-center hover:text-mint transition-colors"
@@ -65,7 +256,6 @@
     </nav>
 
     <main class="relative pt-36 pb-28 px-4">
-        <div class="aurora"></div>
         <div class="max-w-3xl mx-auto relative">
 
             <a href="index.html"
@@ -74,7 +264,7 @@
             </a>
 
             <span class="chip inline-block px-4 py-1.5 text-xs font-semibold muted">Last updated: 20 August 2026</span>
-            <h1 class="mt-6 font-display font-extrabold text-5xl md:text-6xl tracking-tight leading-[1.05]">
+            <h1 class="mt-6 display text-5xl md:text-6xl tracking-tight leading-[1.05]">
                 Privacy <span class="grad">Policy</span>
             </h1>
             <p class="mt-4 text-lg font-semibold">Pour: Ball Sort Puzzle</p>
@@ -95,7 +285,7 @@
             <div class="mt-12 space-y-12 sec">
 
                 <section>
-                    <h2 class="font-display font-extrabold text-2xl mb-4">1. Data stored on your device</h2>
+                    <h2 class="display text-2xl mb-4">1. Data stored on your device</h2>
                     <p>Your game progress &mdash; current level, levels unlocked, best move counts, star ratings, coin
                         balance, purchases, and your sound and music settings &mdash; is stored
                         <strong>only on your device</strong>. It is never uploaded and is not visible to us.
@@ -103,7 +293,7 @@
                 </section>
 
                 <section>
-                    <h2 class="font-display font-extrabold text-2xl mb-4">2. Advertising &mdash; Google AdMob</h2>
+                    <h2 class="display text-2xl mb-4">2. Advertising &mdash; Google AdMob</h2>
                     <p class="mb-4">Pour displays banner, interstitial, and rewarded advertisements through Google
                         AdMob. To serve and measure ads, Google may collect and process:</p>
                     <ul class="list-disc ml-5 space-y-2">
@@ -123,7 +313,7 @@
                 </section>
 
                 <section>
-                    <h2 class="font-display font-extrabold text-2xl mb-4">3. Analytics &amp; crash reporting &mdash;
+                    <h2 class="display text-2xl mb-4">3. Analytics &amp; crash reporting &mdash;
                         Firebase</h2>
                     <p class="mb-4">Pour uses Firebase Analytics and Firebase Crashlytics to understand how the game is
                         played and to receive crash reports. These collect:</p>
@@ -146,7 +336,7 @@
                 </section>
 
                 <section>
-                    <h2 class="font-display font-extrabold text-2xl mb-4">4. In-app purchases</h2>
+                    <h2 class="display text-2xl mb-4">4. In-app purchases</h2>
                     <p>Pour offers optional in-app purchases (coin packs and an ad-free upgrade) processed entirely by
                         <strong>Google Play Billing</strong>. We never see or store your payment details, card number,
                         or billing address. Google handles the transaction and tells the app only whether it
@@ -154,27 +344,27 @@
                 </section>
 
                 <section>
-                    <h2 class="font-display font-extrabold text-2xl mb-4">5. Your choices &amp; consent</h2>
+                    <h2 class="display text-2xl mb-4">5. Your choices &amp; consent</h2>
                     <div class="grid sm:grid-cols-2 gap-4 mt-5">
                         <div class="card p-6">
-                            <h3 class="font-display font-extrabold text-lg mb-2">EEA, UK &amp; Switzerland</h3>
+                            <h3 class="display text-lg mb-2">EEA, UK &amp; Switzerland</h3>
                             <p class="text-sm">A Google-certified consent message appears the first time you play.
                                 Change it any time from <strong>Settings &rarr; Privacy Options</strong> in the app.
                                 Declining also switches off analytics and crash reporting.</p>
                         </div>
                         <div class="card p-6">
-                            <h3 class="font-display font-extrabold text-lg mb-2">Advertising ID</h3>
+                            <h3 class="display text-lg mb-2">Advertising ID</h3>
                             <p class="text-sm">Reset or delete it any time in Android
                                 <strong>Settings &rarr; Privacy &rarr; Ads</strong>, where you can also opt out of
                                 personalised ads.</p>
                         </div>
                         <div class="card p-6">
-                            <h3 class="font-display font-extrabold text-lg mb-2">Removing ads</h3>
+                            <h3 class="display text-lg mb-2">Removing ads</h3>
                             <p class="text-sm">The ad-free purchase stops banner and interstitial advertising. Rewarded
                                 ads stay available because they are optional and you choose to watch them.</p>
                         </div>
                         <div class="card p-6">
-                            <h3 class="font-display font-extrabold text-lg mb-2">Resetting analytics</h3>
+                            <h3 class="display text-lg mb-2">Resetting analytics</h3>
                             <p class="text-sm">Clearing the data of the app or reinstalling resets the app instance ID
                                 and disconnects future data from your installation.</p>
                         </div>
@@ -182,7 +372,7 @@
                 </section>
 
                 <section>
-                    <h2 class="font-display font-extrabold text-2xl mb-4">6. Permissions the app requests</h2>
+                    <h2 class="display text-2xl mb-4">6. Permissions the app requests</h2>
                     <div class="overflow-x-auto card p-2">
                         <table class="tbl">
                             <thead>
@@ -213,14 +403,14 @@
                 </section>
 
                 <section>
-                    <h2 class="font-display font-extrabold text-2xl mb-4">7. Children and privacy</h2>
+                    <h2 class="display text-2xl mb-4">7. Children and privacy</h2>
                     <p>Pour is <strong>not directed at children under 13</strong>. We do not knowingly collect personal
                         information from children. If you believe a child has provided personal information through the
                         app, contact us and we will act on it.</p>
                 </section>
 
                 <section>
-                    <h2 class="font-display font-extrabold text-2xl mb-4">8. Data retention &amp; deletion</h2>
+                    <h2 class="display text-2xl mb-4">8. Data retention &amp; deletion</h2>
                     <p>We hold no personal data ourselves. Progress lives on your device and is removed on uninstall.
                         Analytics data is retained by Google for the period set on the Firebase project, then deleted
                         automatically. To request deletion, contact us &mdash; or clear the data of the app, which
@@ -228,14 +418,14 @@
                 </section>
 
                 <section>
-                    <h2 class="font-display font-extrabold text-2xl mb-4">9. Security</h2>
+                    <h2 class="display text-2xl mb-4">9. Security</h2>
                     <p>The app stores no credentials and transmits no personal data of its own. All advertising and
                         analytics traffic uses encrypted connections managed by the Google Mobile Ads and Firebase SDKs.
                         No method of transmission is 100% secure.</p>
                 </section>
 
                 <section>
-                    <h2 class="font-display font-extrabold text-2xl mb-4">10. Changes to this policy</h2>
+                    <h2 class="display text-2xl mb-4">10. Changes to this policy</h2>
                     <p>If this policy changes, the date at the top changes and the revised version is published at this
                         same URL. Material changes will also be noted in the update notes of the app.</p>
                 </section>
@@ -246,7 +436,7 @@
                 <p class="text-sm font-bold uppercase tracking-[0.18em] muted mb-3">Contact</p>
                 <p class="muted mb-3">Questions about this policy or your data?</p>
                 <a href="mailto:tambeshubham2004@gmail.com"
-                    class="font-display font-extrabold text-xl grad">tambeshubham2004@gmail.com</a>
+                    class="display text-xl grad">tambeshubham2004@gmail.com</a>
             </div>
 
             <p class="text-center text-sm muted mt-12">&copy; 2026 Arcadly. All rights reserved.</p>
@@ -255,6 +445,15 @@
 
     <script>
         lucide.createIcons();
+
+        document.querySelectorAll('.card').forEach((el) => {
+            el.addEventListener('pointermove', (e) => {
+                const r = el.getBoundingClientRect();
+                el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+                el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+            });
+        });
+
         function toggleTheme() {
             const html = document.documentElement;
             html.classList.toggle('dark');
