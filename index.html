@@ -8,8 +8,10 @@
     <meta name="description"
         content="Arcadly builds addictive, high-impact arcade experiences for Android. Sky Hopper, Pour: Ball Sort Puzzle, and Orbit Rush.">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&display=swap"
         rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
@@ -18,7 +20,11 @@
             theme: {
                 extend: {
                     colors: { ink: '#08090D', mint: '#7EE0C4', amber: '#FFB454', violet: '#8B7CF6' },
-                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'], display: ['Syne', 'sans-serif'] }
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        display: ['Chakra Petch', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
                 }
             }
         }
@@ -168,12 +174,6 @@
 
         .muted { color: var(--muted); }
 
-        .display {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            letter-spacing: -0.035em;
-            line-height: .92;
-        }
 
         /* ---------- Scroll reveal ---------- */
         .reveal {
@@ -200,6 +200,64 @@
             .reveal { opacity: 1; transform: none; transition: none; }
             .card { transition: none; }
         }
+
+        /* ---------- Arcade treatment ---------- */
+        .display {
+            font-family: 'Chakra Petch', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            line-height: .98;
+            text-transform: uppercase;
+        }
+
+        .score {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+        }
+
+        /* Buttons physically depress, the way an arcade cabinet button does. */
+        .btn-press { transition: transform .12s ease, box-shadow .12s ease, filter .2s ease; }
+        .btn-press:active { transform: translateY(2px) scale(.99); }
+
+        /* XP-style meter used for build progress on the game cards. */
+        .meter {
+            height: 6px;
+            border-radius: 9999px;
+            background: rgba(127, 127, 145, .22);
+            overflow: hidden;
+        }
+
+        .meter > i {
+            display: block;
+            height: 100%;
+            border-radius: 9999px;
+            background: linear-gradient(90deg, #7EE0C4, #FFB454);
+            box-shadow: 0 0 12px rgba(126, 224, 196, .55);
+        }
+
+        /* Faint CRT scanlines. Very low contrast so text stays crisp. */
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: .35;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, .035) 0px,
+                rgba(255, 255, 255, .035) 1px,
+                transparent 1px,
+                transparent 3px);
+        }
+
+        html:not(.dark) .scanlines { opacity: .12; background: repeating-linear-gradient(
+                to bottom, rgba(0,0,0,.04) 0px, rgba(0,0,0,.04) 1px, transparent 1px, transparent 3px); }
+
+        @media (prefers-reduced-motion: reduce) {
+            .btn-press { transition: none; }
+        }
     </style>
 </head>
 
@@ -211,6 +269,7 @@
         <div class="blob blob-3"></div>
     </div>
     <div class="grain" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
 
     <!-- NAV -->
     <nav class="fixed top-0 inset-x-0 z-50 px-4 pt-4">
@@ -253,7 +312,7 @@
 
             <div class="mt-11 flex flex-wrap items-center justify-center gap-3">
                 <a href="#games"
-                    class="group px-7 py-3.5 rounded-xl font-semibold text-ink bg-mint hover:brightness-110 transition-all inline-flex items-center gap-2"
+                    class="btn-press group px-7 py-3.5 rounded-xl font-semibold text-ink bg-mint hover:brightness-110 transition-all inline-flex items-center gap-2"
                     style="box-shadow:0 18px 44px -20px rgba(126,224,196,.85)">
                     Explore games
                     <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-0.5 transition-transform"></i>
@@ -263,6 +322,30 @@
             </div>
         </div>
     </header>
+
+    <!-- SCOREBOARD -->
+    <section class="px-4 pb-24">
+        <div class="max-w-5xl mx-auto card p-8 md:p-10">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <p class="score text-4xl md:text-5xl grad" data-count="3">0</p>
+                    <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mt-3">Titles</p>
+                </div>
+                <div>
+                    <p class="score text-4xl md:text-5xl grad" data-count="1" data-suffix="">0</p>
+                    <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mt-3">Live on Play</p>
+                </div>
+                <div>
+                    <p class="score text-4xl md:text-5xl grad" data-count="100" data-suffix="%">0</p>
+                    <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mt-3">Solvable levels</p>
+                </div>
+                <div>
+                    <p class="score text-4xl md:text-5xl grad">&#8734;</p>
+                    <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mt-3">Levels to play</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- BENTO -->
     <section class="px-4 pb-28">
@@ -345,6 +428,13 @@
                         <span class="chip px-3 py-1 text-xs muted">High Score</span>
                         <span class="chip px-3 py-1 text-xs muted">Indie</span>
                     </div>
+                    <div class="mt-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] font-bold uppercase tracking-[0.16em] muted">Shipped</span>
+                            <span class="score text-[11px] muted">100%</span>
+                        </div>
+                        <div class="meter"><i style="width:100%"></i></div>
+                    </div>
                     <a href="sky-hopper.html"
                         class="mt-7 text-sm font-semibold text-mint inline-flex items-center gap-2 hover:gap-3 transition-all">
                         View game <i data-lucide="arrow-right" class="w-4 h-4"></i>
@@ -368,6 +458,13 @@
                         <span class="chip px-3 py-1 text-xs muted">Endless</span>
                         <span class="chip px-3 py-1 text-xs muted">Offline</span>
                     </div>
+                    <div class="mt-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] font-bold uppercase tracking-[0.16em] muted">In testing</span>
+                            <span class="score text-[11px] muted">85%</span>
+                        </div>
+                        <div class="meter"><i style="width:85%"></i></div>
+                    </div>
                     <a href="pour.html"
                         class="mt-7 text-sm font-semibold text-mint inline-flex items-center gap-2 hover:gap-3 transition-all">
                         View game <i data-lucide="arrow-right" class="w-4 h-4"></i>
@@ -390,6 +487,13 @@
                     <div class="mt-6 flex flex-wrap gap-2">
                         <span class="chip px-3 py-1 text-xs muted">Space</span>
                         <span class="chip px-3 py-1 text-xs muted">Physics</span>
+                    </div>
+                    <div class="mt-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] font-bold uppercase tracking-[0.16em] muted">Prototyping</span>
+                            <span class="score text-[11px] muted">40%</span>
+                        </div>
+                        <div class="meter"><i style="width:40%"></i></div>
                     </div>
                     <a href="#devlog"
                         class="mt-7 text-sm font-semibold text-mint inline-flex items-center gap-2 hover:gap-3 transition-all">
@@ -480,7 +584,7 @@
             <p class="muted mb-9 max-w-xl mx-auto leading-relaxed">Get notified when we drop new games, secret levels,
                 and Arcadly updates. No spam, just high-scores.</p>
             <a href="mailto:tambeshubham2004@gmail.com?subject=Squad%20Up"
-                class="group inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-ink bg-mint hover:brightness-110 transition-all"
+                class="btn-press group inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-ink bg-mint hover:brightness-110 transition-all"
                 style="box-shadow:0 18px 44px -20px rgba(126,224,196,.85)">
                 Squad up
                 <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-0.5 transition-transform"></i>
@@ -505,6 +609,36 @@
 
     <script>
         lucide.createIcons();
+
+        // Scoreboard count-up. Runs once, when the panel first scrolls into view.
+        const counters = document.querySelectorAll('[data-count]');
+        if (counters.length && 'IntersectionObserver' in window) {
+            const cio = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    const el = entry.target;
+                    cio.unobserve(el);
+                    const target = parseInt(el.dataset.count, 10);
+                    const suffix = el.dataset.suffix || '';
+                    const started = performance.now();
+                    const dur = 1100;
+                    const step = (now) => {
+                        const t = Math.min((now - started) / dur, 1);
+                        // Ease-out so the number decelerates into place.
+                        const eased = 1 - Math.pow(1 - t, 3);
+                        el.textContent = Math.round(target * eased) + suffix;
+                        if (t < 1) requestAnimationFrame(step);
+                    };
+                    requestAnimationFrame(step);
+                });
+            }, { threshold: 0.4 });
+            counters.forEach((el) => cio.observe(el));
+        } else {
+            counters.forEach((el) => {
+                el.textContent = el.dataset.count + (el.dataset.suffix || '');
+            });
+        }
+
 
         function toggleTheme() {
             const html = document.documentElement;

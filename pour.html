@@ -8,8 +8,10 @@
     <meta name="description"
         content="Pour: Ball Sort Puzzle — sort every colour, one pour at a time. Endless levels, and every one verified solvable.">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&display=swap"
         rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
@@ -18,7 +20,11 @@
             theme: {
                 extend: {
                     colors: { ink: '#08090D', mint: '#7EE0C4', amber: '#FFB454', violet: '#8B7CF6' },
-                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'], display: ['Syne', 'sans-serif'] }
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        display: ['Chakra Petch', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
                 }
             }
         }
@@ -168,12 +174,6 @@
 
         .muted { color: var(--muted); }
 
-        .display {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            letter-spacing: -0.035em;
-            line-height: .92;
-        }
 
         /* ---------- Scroll reveal ---------- */
         .reveal {
@@ -252,12 +252,70 @@
         }
 
         .tbl th {
-            font-family: 'Syne', sans-serif;
+            font-family: 'Chakra Petch', sans-serif;
             font-weight: 800;
             text-transform: uppercase;
             font-size: .72rem;
             letter-spacing: .08em;
             color: var(--muted);
+        }
+
+        /* ---------- Arcade treatment ---------- */
+        .display {
+            font-family: 'Chakra Petch', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            line-height: .98;
+            text-transform: uppercase;
+        }
+
+        .score {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+        }
+
+        /* Buttons physically depress, the way an arcade cabinet button does. */
+        .btn-press { transition: transform .12s ease, box-shadow .12s ease, filter .2s ease; }
+        .btn-press:active { transform: translateY(2px) scale(.99); }
+
+        /* XP-style meter used for build progress on the game cards. */
+        .meter {
+            height: 6px;
+            border-radius: 9999px;
+            background: rgba(127, 127, 145, .22);
+            overflow: hidden;
+        }
+
+        .meter > i {
+            display: block;
+            height: 100%;
+            border-radius: 9999px;
+            background: linear-gradient(90deg, #7EE0C4, #FFB454);
+            box-shadow: 0 0 12px rgba(126, 224, 196, .55);
+        }
+
+        /* Faint CRT scanlines. Very low contrast so text stays crisp. */
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: .35;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, .035) 0px,
+                rgba(255, 255, 255, .035) 1px,
+                transparent 1px,
+                transparent 3px);
+        }
+
+        html:not(.dark) .scanlines { opacity: .12; background: repeating-linear-gradient(
+                to bottom, rgba(0,0,0,.04) 0px, rgba(0,0,0,.04) 1px, transparent 1px, transparent 3px); }
+
+        @media (prefers-reduced-motion: reduce) {
+            .btn-press { transition: none; }
         }
     </style>
 </head>
@@ -270,6 +328,7 @@
         <div class="blob blob-3"></div>
     </div>
     <div class="grain" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
 
     <nav class="fixed top-0 inset-x-0 z-50 px-4 pt-4">
         <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-5 py-3 rounded-2xl backdrop-blur-xl"
@@ -335,6 +394,28 @@
         </div>
     </header>
 
+    <!-- QUICK STATS -->
+    <section class="px-4 pb-24">
+        <div class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="card p-6 text-center">
+                <p class="score text-3xl grad">&#8734;</p>
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mt-2">Levels</p>
+            </div>
+            <div class="card p-6 text-center">
+                <p class="score text-3xl grad">100%</p>
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mt-2">Solvable</p>
+            </div>
+            <div class="card p-6 text-center">
+                <p class="score text-3xl grad">3</p>
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mt-2">Stars per level</p>
+            </div>
+            <div class="card p-6 text-center">
+                <p class="score text-3xl grad">0</p>
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mt-2">Ads to start</p>
+            </div>
+        </div>
+    </section>
+
     <!-- ABOUT -->
     <section class="px-4 py-24 sec" style="border-top:1px solid var(--line)">
         <div class="max-w-3xl mx-auto">
@@ -345,11 +426,14 @@
                 Colours never mix, and every tube has a limit &mdash; so the order you empty them in is the whole
                 puzzle.
             </p>
-            <p class="text-lg">The difficulty curve is generated rather than hand-listed, so the levels never run out.
-                Each board is checked by a solver before it ever reaches you, and the par shown on screen is the
-                <strong>shortest solution that exists</strong>, not an estimate &mdash; so a three-star run genuinely
-                means you found the best line.
+            <p class="text-lg mb-5">The difficulty curve is generated rather than hand-listed, so the levels never
+                run out. Each board is checked by a solver before it ever reaches you, and the par shown on screen is
+                the <strong>shortest solution that exists</strong>, not an estimate &mdash; so a three-star run
+                genuinely means you found the best line.
             </p>
+            <p class="text-lg">Sound is synthesised on the device rather than streamed or bundled, so the game stays
+                small and there is no delay between a tap and the sound it makes. No account, no sign-up, and your
+                progress stays on your phone.</p>
         </div>
     </section>
 
@@ -394,6 +478,112 @@
                         connection.</p>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- HOW IT PLAYS -->
+    <section class="px-4 pb-28">
+        <div class="max-w-5xl mx-auto">
+            <div class="mb-12 max-w-2xl">
+                <p class="text-xs font-semibold uppercase tracking-[0.28em] muted mb-5">How it plays</p>
+                <h2 class="display text-4xl md:text-5xl">Three rules. <span class="grad">Endless depth.</span></h2>
+            </div>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="card p-8">
+                    <div class="display text-5xl grad mb-5">01</div>
+                    <h3 class="display text-xl mb-3">Tap to lift</h3>
+                    <p class="text-sm muted leading-relaxed">Tap a tube to pick up every ball of the same colour sitting
+                        on top of it.</p>
+                </div>
+                <div class="card p-8">
+                    <div class="display text-5xl grad mb-5">02</div>
+                    <h3 class="display text-xl mb-3">Tap to pour</h3>
+                    <p class="text-sm muted leading-relaxed">Pour onto a matching colour or into an empty tube. Colours
+                        never mix.</p>
+                </div>
+                <div class="card p-8">
+                    <div class="display text-5xl grad mb-5">03</div>
+                    <h3 class="display text-xl mb-3">Sort them all</h3>
+                    <p class="text-sm muted leading-relaxed">Every tube holds one colour, or nothing at all. Capacity is
+                        the constraint.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DIFFICULTY -->
+    <section class="px-4 py-28" style="border-top:1px solid var(--line)">
+        <div class="max-w-5xl mx-auto">
+            <div class="mb-12 max-w-2xl">
+                <p class="text-xs font-semibold uppercase tracking-[0.28em] muted mb-5">The curve</p>
+                <h2 class="display text-4xl md:text-5xl mb-5">It never runs out.</h2>
+                <p class="muted leading-relaxed">Levels are not a hand-written list that stops at 500. Every knob is a
+                    function of the level number, so the difficulty keeps climbing for as long as you keep playing.</p>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="card p-7">
+                    <p class="text-xs font-semibold uppercase tracking-[0.18em] muted mb-3">Colours</p>
+                    <p class="display text-3xl mb-2">+1</p>
+                    <p class="text-sm muted leading-relaxed">A new colour every two levels, without limit.</p>
+                </div>
+                <div class="card p-7">
+                    <p class="text-xs font-semibold uppercase tracking-[0.18em] muted mb-3">Tube depth</p>
+                    <p class="display text-3xl mb-2">4 &rarr; 8</p>
+                    <p class="text-sm muted leading-relaxed">Tubes get deeper past level 25, up to eight balls.</p>
+                </div>
+                <div class="card p-7">
+                    <p class="text-xs font-semibold uppercase tracking-[0.18em] muted mb-3">Spare tubes</p>
+                    <p class="display text-3xl mb-2">2+</p>
+                    <p class="text-sm muted leading-relaxed">More breathing room appears as the colour count grows.</p>
+                </div>
+                <div class="card p-7">
+                    <p class="text-xs font-semibold uppercase tracking-[0.18em] muted mb-3">Same everywhere</p>
+                    <p class="display text-3xl mb-2">=</p>
+                    <p class="text-sm muted leading-relaxed">Level 47 is the same board on every device, so scores
+                        compare.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STUCK -->
+    <section class="px-4 pb-28">
+        <div class="max-w-5xl mx-auto">
+            <div class="mb-12 max-w-2xl">
+                <p class="text-xs font-semibold uppercase tracking-[0.28em] muted mb-5">When you get stuck</p>
+                <h2 class="display text-4xl md:text-5xl">A way out, always.</h2>
+            </div>
+            <div class="grid sm:grid-cols-3 gap-4">
+                <div class="card p-8">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-5"
+                        style="background:rgba(126,224,196,.13)">
+                        <i data-lucide="undo-2" class="w-5 h-5 text-mint"></i>
+                    </div>
+                    <h3 class="display text-xl mb-2">Undo</h3>
+                    <p class="text-sm muted leading-relaxed">Step back through your moves. The first few on every level
+                        are free.</p>
+                </div>
+                <div class="card p-8">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-5"
+                        style="background:rgba(255,180,84,.13)">
+                        <i data-lucide="lightbulb" class="w-5 h-5 text-amber"></i>
+                    </div>
+                    <h3 class="display text-xl mb-2">Hint</h3>
+                    <p class="text-sm muted leading-relaxed">Highlights a move that actually makes progress, not just a
+                        legal one.</p>
+                </div>
+                <div class="card p-8">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-5"
+                        style="background:rgba(139,124,246,.15)">
+                        <i data-lucide="plus" class="w-5 h-5 text-violet"></i>
+                    </div>
+                    <h3 class="display text-xl mb-2">Extra tube</h3>
+                    <p class="text-sm muted leading-relaxed">The strongest rescue &mdash; adds permanent room to a
+                        jammed board.</p>
+                </div>
+            </div>
+            <p class="text-sm muted leading-relaxed mt-8 max-w-2xl">Power-ups are paid for with coins earned by clearing
+                levels, or by watching an optional ad. The price is always shown before you tap.</p>
         </div>
     </section>
 

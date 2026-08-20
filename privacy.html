@@ -8,8 +8,10 @@
     <meta name="description"
         content="Privacy Policy for Sky Hopper — how information is handled when you play our Android game.">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&display=swap"
         rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
@@ -18,7 +20,11 @@
             theme: {
                 extend: {
                     colors: { ink: '#08090D', mint: '#7EE0C4', amber: '#FFB454', violet: '#8B7CF6' },
-                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'], display: ['Syne', 'sans-serif'] }
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        display: ['Chakra Petch', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
                 }
             }
         }
@@ -168,12 +174,6 @@
 
         .muted { color: var(--muted); }
 
-        .display {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            letter-spacing: -0.035em;
-            line-height: .92;
-        }
 
         /* ---------- Scroll reveal ---------- */
         .reveal {
@@ -218,12 +218,70 @@
         }
 
         .tbl th {
-            font-family: 'Syne', sans-serif;
+            font-family: 'Chakra Petch', sans-serif;
             font-weight: 800;
             text-transform: uppercase;
             font-size: .72rem;
             letter-spacing: .08em;
             color: var(--muted);
+        }
+
+        /* ---------- Arcade treatment ---------- */
+        .display {
+            font-family: 'Chakra Petch', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            line-height: .98;
+            text-transform: uppercase;
+        }
+
+        .score {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+        }
+
+        /* Buttons physically depress, the way an arcade cabinet button does. */
+        .btn-press { transition: transform .12s ease, box-shadow .12s ease, filter .2s ease; }
+        .btn-press:active { transform: translateY(2px) scale(.99); }
+
+        /* XP-style meter used for build progress on the game cards. */
+        .meter {
+            height: 6px;
+            border-radius: 9999px;
+            background: rgba(127, 127, 145, .22);
+            overflow: hidden;
+        }
+
+        .meter > i {
+            display: block;
+            height: 100%;
+            border-radius: 9999px;
+            background: linear-gradient(90deg, #7EE0C4, #FFB454);
+            box-shadow: 0 0 12px rgba(126, 224, 196, .55);
+        }
+
+        /* Faint CRT scanlines. Very low contrast so text stays crisp. */
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: .35;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, .035) 0px,
+                rgba(255, 255, 255, .035) 1px,
+                transparent 1px,
+                transparent 3px);
+        }
+
+        html:not(.dark) .scanlines { opacity: .12; background: repeating-linear-gradient(
+                to bottom, rgba(0,0,0,.04) 0px, rgba(0,0,0,.04) 1px, transparent 1px, transparent 3px); }
+
+        @media (prefers-reduced-motion: reduce) {
+            .btn-press { transition: none; }
         }
     </style>
 </head>
@@ -236,6 +294,7 @@
         <div class="blob blob-3"></div>
     </div>
     <div class="grain" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
 
     <nav class="fixed top-0 inset-x-0 z-50 px-4 pt-4">
         <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-5 py-3 rounded-2xl backdrop-blur-xl"
