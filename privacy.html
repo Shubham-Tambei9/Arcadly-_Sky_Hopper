@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy | Arcadly</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Privacy Policy — Sky Hopper | Arcadly</title>
+    <meta name="description"
+        content="Privacy Policy for Sky Hopper — how information is handled when you play our Android game.">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Syne:wght@700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap"
         rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
@@ -17,260 +17,193 @@
             darkMode: 'class',
             theme: {
                 extend: {
-                    colors: {
-                        cream: '#FCF5E5',
-                        orange: '#FF6B35',
-                        yellow: '#FFD100',
-                        blue: '#1A659E',
-                        black: '#111111',
-                    },
-                    fontFamily: {
-                        sans: ['Space Grotesk', 'sans-serif'],
-                        display: ['Syne', 'sans-serif'],
-                    }
+                    colors: { ink: '#0B0E17', mint: '#7EE0C4', amber: '#FFB454' },
+                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'], display: ['Syne', 'sans-serif'] }
                 }
             }
         }
     </script>
     <style>
-        body {
-            background-color: #FCF5E5;
-            color: #111111;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .dark body {
-            background-color: #000000;
-            color: #ffffff;
-        }
-
-        .neo-border {
-            border: 3px solid #111111;
-            transition: border-color 0.3s ease;
-        }
-
-        .dark .neo-border {
-            border-color: #ffffff;
-        }
-
-        .neo-shadow {
-            box-shadow: 4px 4px 0px 0px #111111;
-            transition: box-shadow 0.3s ease;
-        }
-
-        .dark .neo-shadow {
-            box-shadow: 4px 4px 0px 0px #FFD100;
-        }
-
-        .highlight {
-            background: #FFD100;
-            padding: 24px;
-            border: 3px solid #111111;
-            box-shadow: 4px 4px 0px 0px #111111;
-            margin: 24px 0;
-            color: #111111;
-        }
-
-        .dark .highlight {
-            background: #FF6B35;
-            border-color: #ffffff;
-            box-shadow: 4px 4px 0px 0px #FFD100;
-        }
-
-        .neo-button {
-            border: 3px solid #111111;
-            box-shadow: 4px 4px 0px 0px #111111;
-            transition: all 0.2s;
-        }
-
-        .dark .neo-button {
-            border-color: #ffffff;
-            box-shadow: 4px 4px 0px 0px #ffffff;
-        }
+        :root { --bg:#FAFAF8; --fg:#0B0E17; --muted:#5B6478; --card:#FFFFFF; --line:rgba(11,14,23,.10); }
+        html.dark { --bg:#0B0E17; --fg:#EEF1FB; --muted:#8992AC; --card:rgba(255,255,255,.04); --line:rgba(255,255,255,.09); }
+        body { background:var(--bg); color:var(--fg); transition:background-color .4s ease,color .4s ease; -webkit-font-smoothing:antialiased; }
+        .aurora { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+        .aurora::before { content:""; position:absolute; width:40rem; height:40rem; border-radius:9999px; filter:blur(120px); opacity:.24; background:#FFB454; top:-16rem; left:-10rem; }
+        .card { background:var(--card); border:1px solid var(--line); border-radius:1.25rem; }
+        .grad { background:linear-gradient(92deg,#FFE9A8 0%,#FFB454 45%,#7EE0C4 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+        .chip { border:1px solid var(--line); border-radius:9999px; background:var(--card); }
+        .muted { color:var(--muted); }
+        .sec p, .sec li { color:var(--muted); line-height:1.75; }
+        .sec strong { color:var(--fg); }
+        .sec a { color:#7EE0C4; text-decoration:underline; text-underline-offset:3px; }
     </style>
 </head>
 
-<body class="font-sans antialiased dark:bg-black dark:text-white transition-colors">
-    <nav class="fixed top-0 left-0 right-0 z-50 flex justify-center p-6">
-        <div
-            class="bg-white dark:bg-black neo-border neo-shadow px-8 py-3 flex items-center space-x-8 text-black dark:text-white">
-            <a href="index.html#hero" class="text-sm font-bold hover:text-orange transition-colors">Home</a>
-            <a href="index.html#games" class="text-sm font-bold hover:text-orange transition-colors">Games</a>
-            <a href="index.html#devlog" class="text-sm font-bold hover:text-orange transition-colors">Dev Log</a>
-            <a href="privacy.html"
-                class="text-sm font-bold text-orange transition-colors underline decoration-2">Privacy Policy</a>
-        </div>
+<body class="font-sans">
 
-        <!-- Theme Toggle Positioned Top Right -->
-        <div class="absolute right-6 top-6">
-            <button onclick="toggleDarkMode()"
-                class="neo-button w-12 h-12 flex items-center justify-center bg-yellow dark:bg-orange p-0">
-                <i data-lucide="moon" class="dark:hidden w-6 h-6"></i>
-                <i data-lucide="sun" class="hidden dark:block w-6 h-6"></i>
+    <nav class="fixed top-0 inset-x-0 z-50 px-4 pt-4">
+        <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-5 py-3 rounded-2xl backdrop-blur-xl"
+            style="background:var(--card); border:1px solid var(--line)">
+            <a href="index.html" class="font-display font-extrabold tracking-tight text-lg">ARCADLY</a>
+            <div class="hidden md:flex items-center gap-7 text-sm font-semibold">
+                <a href="index.html#hero" class="hover:text-mint transition-colors">Home</a>
+                <a href="index.html#games" class="hover:text-mint transition-colors">Games</a>
+                <a href="index.html#devlog" class="hover:text-mint transition-colors">Dev Log</a>
+            </div>
+            <button onclick="toggleTheme()" aria-label="Toggle theme"
+                class="w-10 h-10 rounded-xl flex items-center justify-center hover:text-mint transition-colors"
+                style="border:1px solid var(--line)">
+                <i data-lucide="moon" class="dark:hidden w-4 h-4"></i>
+                <i data-lucide="sun" class="hidden dark:block w-4 h-4"></i>
             </button>
         </div>
     </nav>
 
-    <main class="pt-48 pb-32 px-4 max-w-4xl mx-auto">
-        <div class="text-center mb-12">
-            <h1 class="text-6xl font-display font-black mb-4 uppercase italic dark:text-white">Privacy <span
-                    class="bg-orange px-3 neo-border text-white">Policy</span></h1>
-            <p class="font-bold uppercase tracking-[0.2em] text-black/50 dark:text-white/50">Last Updated: 03 March 2026
-            </p>
-        </div>
+    <main class="relative pt-36 pb-28 px-4">
+        <div class="aurora"></div>
+        <div class="max-w-3xl mx-auto relative">
 
-        <div
-            class="bg-white dark:bg-black neo-border neo-shadow p-8 md:p-12 space-y-12 text-black dark:text-white leading-relaxed transition-colors">
-            <div
-                class="text-center text-4xl font-display font-black mb-8 tracking-tighter uppercase italic underline decoration-yellow decoration-[12px] underline-offset-[-2px] dark:decoration-orange">
-                SKY HOPPER</div>
+            <a href="index.html"
+                class="inline-flex items-center gap-2 text-sm font-semibold muted hover:text-mint transition-colors mb-8">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Arcadly
+            </a>
 
-            <p class="text-xl font-bold">This Privacy Policy explains how <strong>Sky Hopper</strong> ("we", "our", or
-                "us") handles information when you use our Android game.</p>
+            <span class="chip inline-block px-4 py-1.5 text-xs font-semibold muted">Last updated: 03 March 2026</span>
+            <h1 class="mt-6 font-display font-extrabold text-5xl md:text-6xl tracking-tight leading-[1.05]">
+                Privacy <span class="grad">Policy</span>
+            </h1>
+            <p class="mt-4 text-lg font-semibold">Sky Hopper</p>
+            <p class="mt-6 muted leading-relaxed">This Privacy Policy explains how <strong>Sky Hopper</strong> (we, our,
+                or us) handles information when you use our Android game.</p>
 
-            <!-- 1. Information We Do Not Collect -->
-            <section>
-                <h2 class="text-3xl font-display font-black mb-6 uppercase italic border-l-8 border-orange pl-4">1.
-                    Information We Do Not Collect</h2>
-                <div class="highlight font-bold italic">
-                    <ul class="list-disc ml-6 space-y-2">
-                        <li>No user registration required</li>
-                        <li>No login system</li>
-                        <li>No direct collection of personal information (name, email, phone number)</li>
-                    </ul>
-                </div>
-            </section>
-
-            <!-- 2. Third-Party Advertising Services -->
-            <section>
-                <h2 class="text-3xl font-display font-black mb-6 uppercase italic border-l-8 border-blue pl-4">2.
-                    Third-Party Advertising Services</h2>
-                <p class="text-lg font-bold mb-6">Sky Hopper uses third-party advertising services to display ads within
-                    the game. These advertising networks may automatically collect certain information from your device
-                    for advertising and analytics purposes.</p>
-                <p class="bg-cream dark:bg-zinc-900 p-4 neo-border font-bold italic mb-8 transition-colors">Ads shown in
-                    the game may be personalized or
-                    non-personalized depending on the user's consent, location, and device advertising settings.</p>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="bg-white dark:bg-zinc-900 p-6 neo-border neo-shadow transition-colors">
-                        <h3 class="text-2xl font-black mb-4 uppercase text-orange">Google AdMob</h3>
-                        <ul class="text-sm font-bold space-y-2 mb-4">
-                            <li>• Device information</li>
-                            <li>• Advertising ID</li>
-                            <li>• IP address (approximate location)</li>
-                            <li>• Ad interaction data</li>
-                            <li>• App usage data</li>
-                        </ul>
-                        <a href="https://policies.google.com/technologies/ads"
-                            class="text-blue dark:text-yellow underline font-black text-xs transition-colors">More
-                            Info</a>
-                    </div>
-                    <div class="bg-white dark:bg-zinc-900 p-6 neo-border neo-shadow transition-colors">
-                        <h3 class="text-2xl font-black mb-4 uppercase text-blue dark:text-yellow">Unity Ads</h3>
-                        <ul class="text-sm font-bold space-y-2 mb-4">
-                            <li>• Device information</li>
-                            <li>• Advertising ID</li>
-                            <li>• IP address</li>
-                            <li>• Ad interaction data</li>
-                            <li>• Game interaction data</li>
-                        </ul>
-                        <a href="https://unity.com/legal/privacy-policy"
-                            class="text-orange dark:text-orange underline font-black text-xs transition-colors">Privacy
-                            Policy</a>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 3. GDPR -->
-            <section>
-                <h2 class="text-3xl font-display font-black mb-6 uppercase italic border-l-8 border-yellow pl-4">3. GDPR
-                    & European Users</h2>
-                <p class="text-lg font-bold">If you are located in the European Economic Area (EEA), we comply with the
-                    General Data Protection Regulation (GDPR).</p>
-                <p class="mt-4 font-medium italic">Users located in the EEA may be presented with a consent request
-                    before personalized advertisements are shown. You may choose whether to allow personalized ads or
-                    non-personalized ads and withdraw consent anytime through your device settings.</p>
-            </section>
-
-            <!-- 4. How Information Is Used -->
-            <section>
-                <h2 class="text-3xl font-display font-black mb-6 uppercase italic border-l-8 border-orange pl-4">4. How
-                    Information Is Used</h2>
-                <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <li class="bg-cream dark:bg-zinc-900 p-4 neo-border font-black text-sm transition-colors">DISPLAY
-                        ADVERTISEMENTS</li>
-                    <li class="bg-cream dark:bg-zinc-900 p-4 neo-border font-black text-sm transition-colors">IMPROVE AD
-                        PERFORMANCE</li>
-                    <li class="bg-cream dark:bg-zinc-900 p-4 neo-border font-black text-sm transition-colors">ANALYZE
-                        USAGE TRENDS</li>
-                    <li class="bg-cream dark:bg-zinc-900 p-4 neo-border font-black text-sm transition-colors">GAME
-                        STABILITY & BUGS</li>
+            <div class="card p-7 mt-10 sec">
+                <p class="text-sm font-bold uppercase tracking-[0.18em] muted mb-4">Information we do not collect</p>
+                <ul class="list-disc ml-5 space-y-2">
+                    <li>No user registration required</li>
+                    <li>No login system</li>
+                    <li>No direct collection of personal information (name, email, phone number)</li>
                 </ul>
-            </section>
-
-            <!-- 5. Advertising Identifiers -->
-            <section>
-                <h2 class="text-3xl font-display font-black mb-6 uppercase italic border-l-8 border-blue pl-4">5.
-                    Advertising Identifiers</h2>
-                <p class="text-lg font-bold">Our app may use your device’s advertising identifier (such as Google's
-                    Advertising ID) to show relevant advertisements. You can reset or limit this through your device
-                    settings.</p>
-            </section>
-
-            <!-- 6. Children's Privacy -->
-            <section>
-                <h2 class="text-3xl font-display font-black mb-6 uppercase italic border-l-8 border-yellow pl-4">6.
-                    Children's Privacy</h2>
-                <p class="text-lg font-bold mb-4">Sky Hopper is designed for a general audience and is not specifically
-                    directed to children under 13.</p>
-                <p class="italic font-medium">We do not knowingly collect personal information from children under the
-                    age of 13. If you believe a child has provided personal information, please contact us.</p>
-            </section>
-
-            <!-- 7 & 8 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 border-t-4 border-black pt-12">
-                <section>
-                    <h2 class="text-2xl font-display font-black mb-4 uppercase">7. Data Security</h2>
-                    <p class="text-sm font-bold opacity-70">We take reasonable steps to protect information. However, no
-                        method of transmission is 100% secure.</p>
-                </section>
-                <section>
-                    <h2 class="text-2xl font-display font-black mb-4 uppercase">8. Changes</h2>
-                    <p class="text-sm font-bold opacity-70">We may update this Privacy Policy from time to time. Updates
-                        will be posted on this page.</p>
-                </section>
             </div>
 
-            <!-- 9. Contact -->
-            <section class="bg-black dark:bg-zinc-900 text-white p-8 md:p-12 text-center neo-shadow transition-colors">
-                <h2 class="text-3xl font-display font-black mb-6 uppercase italic">9. Contact Us</h2>
-                <p class="text-xl font-bold mb-4">Questions about this policy?</p>
-                <p class="text-2xl font-display font-black text-yellow dark:text-orange uppercase tracking-tighter">
-                    skyhopper089@gmail.com</p>
-            </section>
+            <div class="mt-12 space-y-12 sec">
 
-            <footer class="text-center pt-8">
-                <p class="font-black text-lg">© 2026 Sky Hopper. All rights reserved.</p>
-            </footer>
+                <section>
+                    <h2 class="font-display font-extrabold text-2xl mb-4">1. Third-party advertising services</h2>
+                    <p class="mb-4">Sky Hopper uses third-party advertising services to display ads within the game.
+                        These advertising networks may automatically collect certain information from your device for
+                        advertising and analytics purposes.</p>
+                    <p class="mb-6">Ads shown in the game may be personalized or non-personalized depending on the
+                        consent of the user, location, and device advertising settings.</p>
+
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div class="card p-6">
+                            <h3 class="font-display font-extrabold text-lg mb-3">Google AdMob</h3>
+                            <ul class="list-disc ml-5 space-y-1.5 text-sm">
+                                <li>Device information</li>
+                                <li>Advertising ID</li>
+                                <li>IP address (approximate location)</li>
+                                <li>Ad interaction data</li>
+                                <li>App usage data</li>
+                            </ul>
+                            <a href="https://policies.google.com/privacy"
+                                class="inline-flex items-center gap-2 text-sm font-bold mt-4 no-underline hover:gap-3 transition-all">More
+                                info <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+                        </div>
+                        <div class="card p-6">
+                            <h3 class="font-display font-extrabold text-lg mb-3">Unity Ads</h3>
+                            <ul class="list-disc ml-5 space-y-1.5 text-sm">
+                                <li>Device information</li>
+                                <li>Advertising ID</li>
+                                <li>IP address</li>
+                                <li>Ad interaction data</li>
+                                <li>Game interaction data</li>
+                            </ul>
+                            <a href="https://unity.com/legal/game-player-and-app-user-privacy-policy"
+                                class="inline-flex items-center gap-2 text-sm font-bold mt-4 no-underline hover:gap-3 transition-all">Privacy
+                                policy <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="font-display font-extrabold text-2xl mb-4">2. GDPR &amp; European users</h2>
+                    <p class="mb-4">If you are located in the European Economic Area (EEA), we comply with the General
+                        Data Protection Regulation (GDPR).</p>
+                    <p>Users located in the EEA may be presented with a consent request before personalized
+                        advertisements are shown. You may choose whether to allow personalized or non-personalized ads,
+                        and withdraw consent at any time through your device settings.</p>
+                </section>
+
+                <section>
+                    <h2 class="font-display font-extrabold text-2xl mb-4">3. How information is used</h2>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
+                        <div class="card p-5 text-center">
+                            <i data-lucide="megaphone" class="w-5 h-5 mx-auto mb-3 text-mint"></i>
+                            <p class="text-xs font-bold uppercase tracking-wider">Display advertisements</p>
+                        </div>
+                        <div class="card p-5 text-center">
+                            <i data-lucide="trending-up" class="w-5 h-5 mx-auto mb-3 text-amber"></i>
+                            <p class="text-xs font-bold uppercase tracking-wider">Improve ad performance</p>
+                        </div>
+                        <div class="card p-5 text-center">
+                            <i data-lucide="bar-chart-3" class="w-5 h-5 mx-auto mb-3 text-mint"></i>
+                            <p class="text-xs font-bold uppercase tracking-wider">Analyze usage trends</p>
+                        </div>
+                        <div class="card p-5 text-center">
+                            <i data-lucide="bug" class="w-5 h-5 mx-auto mb-3 text-amber"></i>
+                            <p class="text-xs font-bold uppercase tracking-wider">Game stability &amp; bugs</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="font-display font-extrabold text-2xl mb-4">4. Advertising identifiers</h2>
+                    <p>Our app may use the advertising identifier of your device (such as the Google Advertising ID) to
+                        show relevant advertisements. You can reset or limit this through your device settings.</p>
+                </section>
+
+                <section>
+                    <h2 class="font-display font-extrabold text-2xl mb-4">5. Children and privacy</h2>
+                    <p class="mb-4">Sky Hopper is designed for a general audience and is not specifically directed to
+                        children under 13.</p>
+                    <p>We do not knowingly collect personal information from children under the age of 13. If you
+                        believe a child has provided personal information, please contact us.</p>
+                </section>
+
+                <div class="grid sm:grid-cols-2 gap-8">
+                    <section>
+                        <h2 class="font-display font-extrabold text-2xl mb-4">6. Data security</h2>
+                        <p>We take reasonable steps to protect information. However, no method of transmission is 100%
+                            secure.</p>
+                    </section>
+                    <section>
+                        <h2 class="font-display font-extrabold text-2xl mb-4">7. Changes</h2>
+                        <p>We may update this Privacy Policy from time to time. Updates will be posted on this page.</p>
+                    </section>
+                </div>
+
+            </div>
+
+            <div class="card p-8 mt-14 text-center">
+                <p class="text-sm font-bold uppercase tracking-[0.18em] muted mb-3">Contact</p>
+                <p class="muted mb-3">Questions about this policy?</p>
+                <a href="mailto:skyhopper089@gmail.com"
+                    class="font-display font-extrabold text-xl grad">skyhopper089@gmail.com</a>
+            </div>
+
+            <p class="text-center text-sm muted mt-12">&copy; 2026 Sky Hopper. All rights reserved.</p>
         </div>
     </main>
 
     <script>
         lucide.createIcons();
-
-        // Dark Mode Toggle Logic
-        function toggleDarkMode() {
+        function toggleTheme() {
             const html = document.documentElement;
             html.classList.toggle('dark');
-            const isDark = html.classList.contains('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
         }
-
-        // Load saved theme
-        if (localStorage.getItem('theme') === 'dark' ||
-            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
         }
     </script>
 </body>

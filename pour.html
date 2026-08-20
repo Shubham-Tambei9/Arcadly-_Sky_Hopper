@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pour: Ball Sort Puzzle | Arcadly</title>
+    <meta name="description"
+        content="Pour: Ball Sort Puzzle — sort every colour, one pour at a time. Endless levels, and every one verified solvable.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { ink: '#0B0E17', mint: '#7EE0C4', amber: '#FFB454' },
+                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'], display: ['Syne', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root { --bg:#FAFAF8; --fg:#0B0E17; --muted:#5B6478; --card:#FFFFFF; --line:rgba(11,14,23,.10); }
+        html.dark { --bg:#0B0E17; --fg:#EEF1FB; --muted:#8992AC; --card:rgba(255,255,255,.04); --line:rgba(255,255,255,.09); }
+        body { background:var(--bg); color:var(--fg); transition:background-color .4s ease,color .4s ease; -webkit-font-smoothing:antialiased; }
+        .aurora { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+        .aurora::before, .aurora::after { content:""; position:absolute; width:42rem; height:42rem; border-radius:9999px; filter:blur(120px); }
+        .aurora::before { background:#7EE0C4; top:-16rem; left:-12rem; opacity:.28; }
+        .aurora::after { background:#FFB454; top:-10rem; right:-14rem; opacity:.20; }
+        .card { background:var(--card); border:1px solid var(--line); border-radius:1.25rem; transition:transform .25s ease, border-color .25s ease; }
+        .card:hover { transform:translateY(-3px); border-color:rgba(126,224,196,.45); }
+        .grad { background:linear-gradient(92deg,#FFE9A8 0%,#FFB454 45%,#7EE0C4 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+        .chip { border:1px solid var(--line); border-radius:9999px; background:var(--card); }
+        .muted { color:var(--muted); }
+        .sec p, .sec li { color:var(--muted); line-height:1.75; }
+        .sec strong { color:var(--fg); }
+
+        /* Tube mock-up: the game art rebuilt in CSS so the page needs no image
+           assets and stays sharp at any density. */
+        .tube { width:52px; border:2px solid rgba(255,255,255,.18); border-top:none;
+                border-radius:6px 6px 20px 20px; background:rgba(255,255,255,.04);
+                display:flex; flex-direction:column-reverse; align-items:center;
+                gap:5px; padding:6px 5px 8px; }
+        html:not(.dark) .tube { border-color:rgba(11,14,23,.20); background:rgba(11,14,23,.03); }
+        .ball { width:36px; height:36px; border-radius:9999px; position:relative; }
+        .ball::after { content:""; position:absolute; width:26%; height:22%; left:20%; top:16%;
+                       border-radius:9999px; background:rgba(255,255,255,.42); }
+    </style>
+</head>
+
+<body class="font-sans">
+
+    <nav class="fixed top-0 inset-x-0 z-50 px-4 pt-4">
+        <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-5 py-3 rounded-2xl backdrop-blur-xl"
+            style="background:var(--card); border:1px solid var(--line)">
+            <a href="index.html" class="font-display font-extrabold tracking-tight text-lg">ARCADLY</a>
+            <div class="hidden md:flex items-center gap-7 text-sm font-semibold">
+                <a href="index.html#hero" class="hover:text-mint transition-colors">Home</a>
+                <a href="index.html#games" class="hover:text-mint transition-colors">Games</a>
+                <a href="index.html#devlog" class="hover:text-mint transition-colors">Dev Log</a>
+                <a href="pour-privacy.html" class="hover:text-mint transition-colors">Privacy</a>
+            </div>
+            <button onclick="toggleTheme()" aria-label="Toggle theme"
+                class="w-10 h-10 rounded-xl flex items-center justify-center hover:text-mint transition-colors"
+                style="border:1px solid var(--line)">
+                <i data-lucide="moon" class="dark:hidden w-4 h-4"></i>
+                <i data-lucide="sun" class="hidden dark:block w-4 h-4"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="relative pt-40 pb-20 px-4 overflow-hidden">
+        <div class="aurora"></div>
+        <div class="max-w-5xl mx-auto relative grid md:grid-cols-2 gap-14 items-center">
+            <div>
+                <span class="chip inline-flex items-center gap-2 px-4 py-1.5 text-xs font-semibold muted">
+                    <span class="w-1.5 h-1.5 rounded-full bg-mint"></span> Developed by Arcadly
+                </span>
+                <h1 class="mt-6 font-display font-extrabold tracking-tight leading-[0.95] text-6xl md:text-7xl">
+                    <span class="grad">POUR</span>
+                </h1>
+                <p class="mt-3 text-sm font-bold uppercase tracking-[0.32em] muted">Ball Sort Puzzle</p>
+                <p class="mt-6 muted leading-relaxed text-lg">Sort every colour, one pour at a time. Endless levels,
+                    escalating chaos &mdash; and every single one verified solvable before you see it.</p>
+
+                <div class="mt-9 flex flex-wrap gap-3">
+                    <span
+                        class="px-7 py-3.5 rounded-2xl font-bold text-ink bg-mint opacity-60 cursor-default shadow-[0_14px_34px_-16px_rgba(126,224,196,.9)]">
+                        Coming Soon to Google Play
+                    </span>
+                    <a href="pour-privacy.html"
+                        class="px-7 py-3.5 rounded-2xl font-semibold hover:text-mint transition-colors"
+                        style="border:1px solid var(--line)">Privacy Policy</a>
+                    <a href="app-ads.txt" class="px-7 py-3.5 rounded-2xl font-semibold hover:text-mint transition-colors"
+                        style="border:1px solid var(--line)">app-ads.txt</a>
+                </div>
+            </div>
+
+            <!-- CSS mock-up of the board, mid-pour -->
+            <div class="card p-8 flex items-end justify-center gap-4" aria-hidden="true">
+                <div class="tube" style="min-height:190px">
+                    <div class="ball" style="background:radial-gradient(circle at 32% 28%,#EE6352,#B8332A)"></div>
+                    <div class="ball" style="background:radial-gradient(circle at 32% 28%,#EBD44B,#B09A1F)"></div>
+                    <div class="ball" style="background:radial-gradient(circle at 32% 28%,#EE6352,#B8332A)"></div>
+                </div>
+                <div class="tube" style="min-height:190px">
+                    <div class="ball" style="background:radial-gradient(circle at 32% 28%,#EBD44B,#B09A1F)"></div>
+                    <div class="ball" style="background:radial-gradient(circle at 32% 28%,#7EE0C4,#3FA98C)"></div>
+                </div>
+                <div class="tube" style="min-height:190px">
+                    <div class="ball" style="background:radial-gradient(circle at 32% 28%,#7EE0C4,#3FA98C)"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ABOUT -->
+    <section class="px-4 py-24 sec" style="border-top:1px solid var(--line)">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="font-display font-extrabold text-4xl md:text-5xl tracking-tight mb-8">About the <span
+                    class="grad">Game</span></h2>
+            <p class="text-lg mb-5">Pour is a ball sort puzzle with one promise most of the genre cannot make:
+                <strong>every level can be solved</strong>. Tap a tube to lift its top colour, tap another to pour.
+                Colours never mix, and every tube has a limit &mdash; so the order you empty them in is the whole
+                puzzle.
+            </p>
+            <p class="text-lg">The difficulty curve is generated rather than hand-listed, so the levels never run out.
+                Each board is checked by a solver before it ever reaches you, and the par shown on screen is the
+                <strong>shortest solution that exists</strong>, not an estimate &mdash; so a three-star run genuinely
+                means you found the best line.
+            </p>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="px-4 pb-24">
+        <div class="max-w-5xl mx-auto">
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="card p-7">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-5"
+                        style="background:rgba(126,224,196,.14)">
+                        <i data-lucide="infinity" class="w-5 h-5 text-mint"></i>
+                    </div>
+                    <h3 class="font-display font-extrabold text-xl mb-2">Endless</h3>
+                    <p class="text-sm muted leading-relaxed">Levels are generated, not hand-listed. They never run out.
+                    </p>
+                </div>
+                <div class="card p-7">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-5"
+                        style="background:rgba(255,180,84,.14)">
+                        <i data-lucide="shield-check" class="w-5 h-5 text-amber"></i>
+                    </div>
+                    <h3 class="font-display font-extrabold text-xl mb-2">Always Solvable</h3>
+                    <p class="text-sm muted leading-relaxed">Every board is proven solvable by a solver before you see
+                        it.</p>
+                </div>
+                <div class="card p-7">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-5"
+                        style="background:rgba(126,224,196,.14)">
+                        <i data-lucide="star" class="w-5 h-5 text-mint"></i>
+                    </div>
+                    <h3 class="font-display font-extrabold text-xl mb-2">Honest Par</h3>
+                    <p class="text-sm muted leading-relaxed">Star ratings measured against the shortest possible
+                        solution.</p>
+                </div>
+                <div class="card p-7">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-5"
+                        style="background:rgba(255,180,84,.14)">
+                        <i data-lucide="wifi-off" class="w-5 h-5 text-amber"></i>
+                    </div>
+                    <h3 class="font-display font-extrabold text-xl mb-2">Plays Offline</h3>
+                    <p class="text-sm muted leading-relaxed">No account, no sign-up. The game itself needs no
+                        connection.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DETAILS -->
+    <section class="px-4 pb-28">
+        <div class="max-w-5xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="card p-6">
+                <p class="text-xs font-bold uppercase tracking-[0.18em] muted mb-2">Publisher</p>
+                <p class="font-display font-extrabold text-lg">Arcadly</p>
+            </div>
+            <div class="card p-6">
+                <p class="text-xs font-bold uppercase tracking-[0.18em] muted mb-2">Release Date</p>
+                <p class="font-display font-extrabold text-lg">2026</p>
+            </div>
+            <div class="card p-6">
+                <p class="text-xs font-bold uppercase tracking-[0.18em] muted mb-2">Platform</p>
+                <p class="font-display font-extrabold text-lg">Android</p>
+            </div>
+            <div class="card p-6">
+                <p class="text-xs font-bold uppercase tracking-[0.18em] muted mb-2">Genre</p>
+                <p class="font-display font-extrabold text-lg">Puzzle</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="px-4 py-14" style="border-top:1px solid var(--line)">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+                <p class="font-display font-extrabold text-lg">ARCADLY</p>
+                <p class="text-sm muted mt-1">&copy; 2026 Crafted for Champions.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-6 text-sm font-semibold">
+                <a href="index.html" class="hover:text-mint transition-colors">Home</a>
+                <a href="pour-privacy.html" class="hover:text-mint transition-colors">Privacy</a>
+                <a href="mailto:tambeshubham2004@gmail.com" class="hover:text-mint transition-colors">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        }
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</body>
+
+</html>

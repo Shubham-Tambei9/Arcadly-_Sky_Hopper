@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy — Pour: Ball Sort Puzzle | Arcadly</title>
+    <meta name="description"
+        content="Privacy Policy for Pour: Ball Sort Puzzle — what data is collected, by whom, and the choices you have.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { ink: '#0B0E17', mint: '#7EE0C4', amber: '#FFB454' },
+                    fontFamily: { sans: ['Space Grotesk', 'sans-serif'], display: ['Syne', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root { --bg:#FAFAF8; --fg:#0B0E17; --muted:#5B6478; --card:#FFFFFF; --line:rgba(11,14,23,.10); }
+        html.dark { --bg:#0B0E17; --fg:#EEF1FB; --muted:#8992AC; --card:rgba(255,255,255,.04); --line:rgba(255,255,255,.09); }
+        body { background:var(--bg); color:var(--fg); transition:background-color .4s ease,color .4s ease; -webkit-font-smoothing:antialiased; }
+        .aurora { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+        .aurora::before { content:""; position:absolute; width:40rem; height:40rem; border-radius:9999px; filter:blur(120px); opacity:.26; background:#7EE0C4; top:-16rem; left:-10rem; }
+        .card { background:var(--card); border:1px solid var(--line); border-radius:1.25rem; }
+        .grad { background:linear-gradient(92deg,#FFE9A8 0%,#FFB454 45%,#7EE0C4 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+        .chip { border:1px solid var(--line); border-radius:9999px; background:var(--card); }
+        .muted { color:var(--muted); }
+        /* Long tables scroll inside their own container so the page body never
+           scrolls sideways on a phone. */
+        .tbl { width:100%; border-collapse:collapse; font-size:.9rem; }
+        .tbl th, .tbl td { border:1px solid var(--line); padding:.7rem .85rem; text-align:left; vertical-align:top; }
+        .tbl th { font-family:'Syne',sans-serif; font-weight:800; text-transform:uppercase; font-size:.72rem; letter-spacing:.08em; color:var(--muted); }
+        .sec p, .sec li { color:var(--muted); line-height:1.75; }
+        .sec strong { color:var(--fg); }
+        .sec a { color:#7EE0C4; text-decoration:underline; text-underline-offset:3px; }
+    </style>
+</head>
+
+<body class="font-sans">
+
+    <nav class="fixed top-0 inset-x-0 z-50 px-4 pt-4">
+        <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-5 py-3 rounded-2xl backdrop-blur-xl"
+            style="background:var(--card); border:1px solid var(--line)">
+            <a href="index.html" class="font-display font-extrabold tracking-tight text-lg">ARCADLY</a>
+            <div class="hidden md:flex items-center gap-7 text-sm font-semibold">
+                <a href="index.html#hero" class="hover:text-mint transition-colors">Home</a>
+                <a href="index.html#games" class="hover:text-mint transition-colors">Games</a>
+                <a href="index.html#devlog" class="hover:text-mint transition-colors">Dev Log</a>
+            </div>
+            <button onclick="toggleTheme()" aria-label="Toggle theme"
+                class="w-10 h-10 rounded-xl flex items-center justify-center hover:text-mint transition-colors"
+                style="border:1px solid var(--line)">
+                <i data-lucide="moon" class="dark:hidden w-4 h-4"></i>
+                <i data-lucide="sun" class="hidden dark:block w-4 h-4"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="relative pt-36 pb-28 px-4">
+        <div class="aurora"></div>
+        <div class="max-w-3xl mx-auto relative">
+
+            <a href="index.html"
+                class="inline-flex items-center gap-2 text-sm font-semibold muted hover:text-mint transition-colors mb-8">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Arcadly
+            </a>
+
+            <span class="chip inline-block px-4 py-1.5 text-xs font-semibold muted">Last updated: 20 August 2026</span>
+            <h1 class="mt-6 font-display font-extrabold text-5xl md:text-6xl tracking-tight leading-[1.05]">
+                Privacy <span class="grad">Policy</span>
+            </h1>
+            <p class="mt-4 text-lg font-semibold">Pour: Ball Sort Puzzle</p>
+            <p class="mt-6 muted leading-relaxed">This policy explains what the app collects, why, and what choices you
+                have. It is written to match what the app actually does &mdash; if the app changes, this document
+                changes with it.</p>
+
+            <div class="card p-7 mt-10 sec">
+                <p class="text-sm font-bold uppercase tracking-[0.18em] muted mb-4">In short</p>
+                <ul class="list-disc ml-5 space-y-2">
+                    <li>No account, no login, no name, email or phone number</li>
+                    <li>No contacts, photos, files, or precise location</li>
+                    <li>We run no servers and hold no personal data ourselves</li>
+                    <li>Ads and analytics are handled by Google, described below</li>
+                </ul>
+            </div>
+
+            <div class="mt-12 space-y-12 sec">
+
+                <section>
+                    <h2 class="font-display font-extrabold text-2xl mb-4">1. Data stored on your device</h2>
+                    <p>Your game progress &mdash; current level, levels unlocked, best move counts, star ratings, coin
+                        balance, purchases, and your sound and music settings &mdash; is stored
+                        <strong>only on your device</strong>. It is never uploaded and is not visible to us.
+                        Uninstalling the app removes it permanently.</p>
+                </section>
+
+                <section>
+                    <h2 class="font-display font-extrabold text-2xl mb-4">2. Advertising &mdash; Google AdMob</h2>
+                    <p class="mb-4">Pour displays banner, interstitial, and rewarded advertisements through Google
+                        AdMob. To serve and measure ads, Google may collect and process:</p>
+                    <ul class="list-disc ml-5 space-y-2">
+                        <li><strong>Advertising ID</strong> &mdash; a resettable device identifier used to select and
+                            measure ads and limit repeats</li>
+                        <li><strong>Approximate location from IP address</strong> &mdash; country level, to select
+                            relevant ads and apply the correct privacy rules</li>
+                        <li><strong>Device and app information</strong> &mdash; device model, OS version, language, app
+                            version</li>
+                        <li><strong>Ad interaction data</strong> &mdash; whether an ad was shown, viewed, clicked, or a
+                            rewarded ad completed</li>
+                    </ul>
+                    <p class="mt-4">Google acts as an independent data controller for this information. See the
+                        <a href="https://policies.google.com/privacy">Google Privacy Policy</a> and
+                        <a href="https://policies.google.com/technologies/partner-sites">how Google uses information
+                            from partner apps</a>. We only ever see aggregated, anonymous performance totals.</p>
+                </section>
+
+                <section>
+                    <h2 class="font-display font-extrabold text-2xl mb-4">3. Analytics &amp; crash reporting &mdash;
+                        Firebase</h2>
+                    <p class="mb-4">Pour uses Firebase Analytics and Firebase Crashlytics to understand how the game is
+                        played and to receive crash reports. These collect:</p>
+                    <ul class="list-disc ml-5 space-y-2">
+                        <li><strong>App instance ID</strong> &mdash; a random identifier for the installation, used to
+                            count unique players. It is not linked to you personally and resets if you reinstall or
+                            clear app data</li>
+                        <li><strong>Approximate location from IP address</strong> &mdash; country and region only. No
+                            precise or GPS location is ever collected</li>
+                        <li><strong>Device and app information</strong> &mdash; device model, OS version, language, app
+                            version</li>
+                        <li><strong>In-app events</strong> &mdash; which level was started or cleared, moves used, star
+                            rating, and which power-ups were used, so we can tell where levels are unfair</li>
+                        <li><strong>Crash reports</strong> &mdash; stack traces, device state at the time of a crash, OS
+                            version</li>
+                    </ul>
+                    <p class="mt-4">This is used only in aggregate, to improve the difficulty and stability of the game.
+                        It is never sold and is not used to identify you. See
+                        <a href="https://firebase.google.com/support/privacy">Firebase Privacy and Security</a>.</p>
+                </section>
+
+                <section>
+                    <h2 class="font-display font-extrabold text-2xl mb-4">4. In-app purchases</h2>
+                    <p>Pour offers optional in-app purchases (coin packs and an ad-free upgrade) processed entirely by
+                        <strong>Google Play Billing</strong>. We never see or store your payment details, card number,
+                        or billing address. Google handles the transaction and tells the app only whether it
+                        succeeded.</p>
+                </section>
+
+                <section>
+                    <h2 class="font-display font-extrabold text-2xl mb-4">5. Your choices &amp; consent</h2>
+                    <div class="grid sm:grid-cols-2 gap-4 mt-5">
+                        <div class="card p-6">
+                            <h3 class="font-display font-extrabold text-lg mb-2">EEA, UK &amp; Switzerland</h3>
+                            <p class="text-sm">A Google-certified consent message appears the first time you play.
+                                Change it any time from <strong>Settings &rarr; Privacy Options</strong> in the app.
+                                Declining also switches off analytics and crash reporting.</p>
+                        </div>
+                        <div class="card p-6">
+                            <h3 class="font-display font-extrabold text-lg mb-2">Advertising ID</h3>
+                            <p class="text-sm">Reset or delete it any time in Android
+                                <strong>Settings &rarr; Privacy &rarr; Ads</strong>, where you can also opt out of
+                                personalised ads.</p>
+                        </div>
+                        <div class="card p-6">
+                            <h3 class="font-display font-extrabold text-lg mb-2">Removing ads</h3>
+                            <p class="text-sm">The ad-free purchase stops banner and interstitial advertising. Rewarded
+                                ads stay available because they are optional and you choose to watch them.</p>
+                        </div>
+                        <div class="card p-6">
+                            <h3 class="font-display font-extrabold text-lg mb-2">Resetting analytics</h3>
+                            <p class="text-sm">Clearing the data of the app or reinstalling resets the app instance ID
+                                and disconnects future data from your installation.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="font-display font-extrabold text-2xl mb-4">6. Permissions the app requests</h2>
+                    <div class="overflow-x-auto card p-2">
+                        <table class="tbl">
+                            <thead>
+                                <tr>
+                                    <th>Permission</th>
+                                    <th>Why</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>INTERNET</code></td>
+                                    <td>Load advertisements and send analytics. The game itself plays fully offline.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>ACCESS_NETWORK_STATE</code></td>
+                                    <td>Lets the ads and analytics SDKs avoid sending requests with no connection.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>AD_ID</code></td>
+                                    <td>The device advertising identifier, used by AdMob as described above.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="mt-4">The app requests no other permissions. It does not access your camera, microphone,
+                        contacts, files, precise location, or call data.</p>
+                </section>
+
+                <section>
+                    <h2 class="font-display font-extrabold text-2xl mb-4">7. Children and privacy</h2>
+                    <p>Pour is <strong>not directed at children under 13</strong>. We do not knowingly collect personal
+                        information from children. If you believe a child has provided personal information through the
+                        app, contact us and we will act on it.</p>
+                </section>
+
+                <section>
+                    <h2 class="font-display font-extrabold text-2xl mb-4">8. Data retention &amp; deletion</h2>
+                    <p>We hold no personal data ourselves. Progress lives on your device and is removed on uninstall.
+                        Analytics data is retained by Google for the period set on the Firebase project, then deleted
+                        automatically. To request deletion, contact us &mdash; or clear the data of the app, which
+                        resets the app instance ID and disconnects future data from your installation.</p>
+                </section>
+
+                <section>
+                    <h2 class="font-display font-extrabold text-2xl mb-4">9. Security</h2>
+                    <p>The app stores no credentials and transmits no personal data of its own. All advertising and
+                        analytics traffic uses encrypted connections managed by the Google Mobile Ads and Firebase SDKs.
+                        No method of transmission is 100% secure.</p>
+                </section>
+
+                <section>
+                    <h2 class="font-display font-extrabold text-2xl mb-4">10. Changes to this policy</h2>
+                    <p>If this policy changes, the date at the top changes and the revised version is published at this
+                        same URL. Material changes will also be noted in the update notes of the app.</p>
+                </section>
+
+            </div>
+
+            <div class="card p-8 mt-14 text-center">
+                <p class="text-sm font-bold uppercase tracking-[0.18em] muted mb-3">Contact</p>
+                <p class="muted mb-3">Questions about this policy or your data?</p>
+                <a href="mailto:tambeshubham2004@gmail.com"
+                    class="font-display font-extrabold text-xl grad">tambeshubham2004@gmail.com</a>
+            </div>
+
+            <p class="text-center text-sm muted mt-12">&copy; 2026 Arcadly. All rights reserved.</p>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        }
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</body>
+
+</html>
