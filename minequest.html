@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MineQuest | Arcadly</title>
+    <meta name="description"
+        content="MineQuest — minesweeper without the coin flips. Guess-free boards, a daily challenge, streaks and global leaderboards.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { ink: '#08090D', mint: '#7EE0C4', amber: '#FFB454', violet: '#8B7CF6' },
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        display: ['Chakra Petch', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg: #FBFBFA;
+            --fg: #08090D;
+            --muted: #61667A;
+            --card: rgba(255, 255, 255, .72);
+            --line: rgba(8, 9, 13, .10);
+            --line-strong: rgba(8, 9, 13, .16);
+            --glow: rgba(126, 224, 196, .22);
+        }
+
+        html.dark {
+            --bg: #08090D;
+            --fg: #F3F5FA;
+            --muted: #8A90A6;
+            --card: rgba(255, 255, 255, .035);
+            --line: rgba(255, 255, 255, .08);
+            --line-strong: rgba(255, 255, 255, .14);
+            --glow: rgba(126, 224, 196, .16);
+        }
+
+        * { -webkit-font-smoothing: antialiased; }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            transition: background-color .4s ease, color .4s ease;
+            overflow-x: hidden;
+        }
+
+        /* ---------- Animated gradient mesh ----------
+           Three blurred blobs drifting on independent loops. Kept on a fixed,
+           pointer-transparent layer so it never intercepts a click and never
+           forces the page to scroll sideways. */
+        .mesh {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            width: 42vw;
+            height: 42vw;
+            min-width: 380px;
+            min-height: 380px;
+            border-radius: 9999px;
+            filter: blur(90px);
+            opacity: .30;
+            will-change: transform;
+        }
+
+        html:not(.dark) .blob { opacity: .38; }
+
+        .blob-1 { background: #7EE0C4; top: -14vw; left: -8vw; animation: drift1 26s ease-in-out infinite; }
+        .blob-2 { background: #FFB454; top: -6vw; right: -10vw; animation: drift2 32s ease-in-out infinite; }
+        .blob-3 { background: #8B7CF6; top: 42vh; left: 30vw; opacity: .18; animation: drift3 38s ease-in-out infinite; }
+
+        @keyframes drift1 {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+            50%      { transform: translate3d(8vw, 6vh, 0) scale(1.15); }
+        }
+
+        @keyframes drift2 {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1.1); }
+            50%      { transform: translate3d(-7vw, 9vh, 0) scale(.9); }
+        }
+
+        @keyframes drift3 {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+            50%      { transform: translate3d(-10vw, -8vh, 0) scale(1.2); }
+        }
+
+        /* Fine film grain, so the large flat gradients do not band. */
+        .grain {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: .30;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
+        }
+
+        html:not(.dark) .grain { opacity: .18; }
+
+        main, nav, footer, header, section { position: relative; z-index: 2; }
+
+        /* ---------- Cards with cursor spotlight ---------- */
+        .card {
+            position: relative;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            transition: border-color .3s ease, transform .3s ease;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity .35s ease;
+            background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 65%);
+            pointer-events: none;
+        }
+
+        .card:hover { border-color: var(--line-strong); transform: translateY(-3px); }
+        .card:hover::before { opacity: 1; }
+
+        /* Gradient hairline along the top edge. */
+        .card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 12%;
+            right: 12%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(126, 224, 196, .55), transparent);
+            opacity: 0;
+            transition: opacity .35s ease;
+        }
+
+        .card:hover::after { opacity: 1; }
+
+        .grad {
+            background: linear-gradient(96deg, #FFE9A8 0%, #FFB454 38%, #7EE0C4 72%, #8B7CF6 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .chip {
+            border: 1px solid var(--line);
+            border-radius: 9999px;
+            background: var(--card);
+            backdrop-filter: blur(8px);
+        }
+
+        .muted { color: var(--muted); }
+
+
+        /* ---------- Scroll reveal ---------- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity .7s cubic-bezier(.16, 1, .3, 1), transform .7s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .reveal.in { opacity: 1; transform: none; }
+
+        /* ---------- Marquee ---------- */
+        .marquee {
+            overflow: hidden;
+            mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+        }
+
+        .marquee-track { display: flex; gap: 3rem; width: max-content; animation: slide 28s linear infinite; }
+
+        @keyframes slide { to { transform: translateX(-50%); } }
+
+        @media (prefers-reduced-motion: reduce) {
+            .blob, .marquee-track { animation: none; }
+            .reveal { opacity: 1; transform: none; transition: none; }
+            .card { transition: none; }
+        }
+
+        /* ---------- Pour board mock-up ----------
+           The game art rebuilt in CSS so the page needs no image assets and
+           stays sharp at any pixel density. */
+        .tube {
+            width: 52px;
+            border: 2px solid var(--line-strong);
+            border-top: none;
+            border-radius: 6px 6px 20px 20px;
+            background: var(--card);
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 5px 8px;
+        }
+
+        .ball {
+            width: 36px;
+            height: 36px;
+            border-radius: 9999px;
+            position: relative;
+        }
+
+        .ball::after {
+            content: "";
+            position: absolute;
+            width: 26%;
+            height: 22%;
+            left: 20%;
+            top: 16%;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, .42);
+        }
+
+        /* ---------- Policy document typography ---------- */
+        .sec p, .sec li { color: var(--muted); line-height: 1.75; }
+        .sec strong { color: var(--fg); }
+        .sec a { color: #7EE0C4; text-decoration: underline; text-underline-offset: 3px; }
+
+        /* Long tables scroll inside their own container so the page body never
+           scrolls sideways on a phone. */
+        .tbl { width: 100%; border-collapse: collapse; font-size: .9rem; }
+
+        .tbl th, .tbl td {
+            border: 1px solid var(--line);
+            padding: .7rem .85rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .tbl th {
+            font-family: 'Chakra Petch', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: .72rem;
+            letter-spacing: .08em;
+            color: var(--muted);
+        }
+
+        /* ---------- Arcade treatment ---------- */
+        .display {
+            font-family: 'Chakra Petch', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            line-height: .98;
+            text-transform: uppercase;
+        }
+
+        .score {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+        }
+
+        /* Buttons physically depress, the way an arcade cabinet button does. */
+        .btn-press { transition: transform .12s ease, box-shadow .12s ease, filter .2s ease; }
+        .btn-press:active { transform: translateY(2px) scale(.99); }
+
+        /* XP-style meter used for build progress on the game cards. */
+        .meter {
+            height: 6px;
+            border-radius: 9999px;
+            background: rgba(127, 127, 145, .22);
+            overflow: hidden;
+        }
+
+        .meter > i {
+            display: block;
+            height: 100%;
+            border-radius: 9999px;
+            background: linear-gradient(90deg, #7EE0C4, #FFB454);
+            box-shadow: 0 0 12px rgba(126, 224, 196, .55);
+        }
+
+        /* Faint CRT scanlines. Very low contrast so text stays crisp. */
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: .35;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, .035) 0px,
+                rgba(255, 255, 255, .035) 1px,
+                transparent 1px,
+                transparent 3px);
+        }
+
+        html:not(.dark) .scanlines { opacity: .12; background: repeating-linear-gradient(
+                to bottom, rgba(0,0,0,.04) 0px, rgba(0,0,0,.04) 1px, transparent 1px, transparent 3px); }
+
+        @media (prefers-reduced-motion: reduce) {
+            .btn-press { transition: none; }
+        }
+
+        /* ---------- MineQuest board mock-up ----------
+           The grid is rebuilt in CSS so the page needs no image assets. */
+        .ms-grid { display: grid; grid-template-columns: repeat(6, 40px); gap: 4px; }
+
+        .ms-cell {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: .95rem;
+            border: 1px solid var(--line-strong);
+            background: var(--card);
+        }
+
+        .ms-cell.open { background: rgba(127, 127, 145, .10); border-color: var(--line); }
+        .ms-n1 { color: #7EE0C4; }
+        .ms-n2 { color: #8B7CF6; }
+        .ms-n3 { color: #FFB454; }
+    </style>
+</head>
+
+<body class="font-sans">
+
+    <div class="mesh" aria-hidden="true">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <nav class="fixed top-0 inset-x-0 z-50 px-4 pt-4">
+        <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-5 py-3 rounded-2xl backdrop-blur-xl"
+            style="background:var(--card); border:1px solid var(--line)">
+            <a href="index.html" class="display text-lg">ARCADLY</a>
+            <div class="hidden md:flex items-center gap-7 text-sm font-semibold">
+                <a href="index.html#hero" class="muted hover:text-mint transition-colors">Home</a>
+                <a href="index.html#games" class="muted hover:text-mint transition-colors">Games</a>
+                <a href="index.html#devlog" class="muted hover:text-mint transition-colors">Dev Log</a>
+            </div>
+            <button onclick="toggleTheme()" aria-label="Toggle theme"
+                class="w-10 h-10 rounded-xl flex items-center justify-center hover:text-mint transition-colors"
+                style="border:1px solid var(--line)">
+                <i data-lucide="moon" class="dark:hidden w-4 h-4"></i>
+                <i data-lucide="sun" class="hidden dark:block w-4 h-4"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="relative pt-40 pb-20 px-4 overflow-hidden">
+        <div class="max-w-5xl mx-auto relative grid md:grid-cols-2 gap-14 items-center">
+            <div>
+                <span class="chip inline-flex items-center gap-2 px-4 py-1.5 text-xs font-semibold muted">
+                    <span class="w-1.5 h-1.5 rounded-full bg-mint"></span> Developed by Arcadly
+                </span>
+                <h1 class="mt-6 display tracking-tight leading-[0.95] text-6xl md:text-7xl">
+                    <span class="grad">MINEQUEST</span>
+                </h1>
+                <p class="mt-3 text-sm font-bold uppercase tracking-[0.32em] muted">Minesweeper, Reimagined</p>
+                <p class="mt-6 muted leading-relaxed text-lg">Minesweeper without the coin flips. Every board is generated guess-free, so pure logic always gets you home &mdash; no 50/50 death on the last two tiles.</p>
+
+                <div class="mt-9 flex flex-wrap gap-3">
+                    <span
+                        class="px-7 py-3.5 rounded-2xl font-bold text-ink bg-mint opacity-60 cursor-default shadow-[0_14px_34px_-16px_rgba(126,224,196,.9)]">
+                        Coming Soon to Google Play
+                    </span>
+                    <a href="index.html#games"
+                        class="px-7 py-3.5 rounded-2xl font-semibold hover:text-mint transition-colors"
+                        style="border:1px solid var(--line)">All Games</a>
+                </div>
+            </div>
+
+            <!-- CSS mock-up of a board, mid-sweep -->
+            <div class="card p-8 grid place-items-center" aria-hidden="true">
+                <div class="ms-grid">
+                    <div class="ms-cell open"></div>
+                    <div class="ms-cell open"><span class="ms-n1">1</span></div>
+                    <div class="ms-cell "><i data-lucide="flag" class="w-4 h-4 text-amber"></i></div>
+                    <div class="ms-cell open"><span class="ms-n1">1</span></div>
+                    <div class="ms-cell open"></div>
+                    <div class="ms-cell open"></div>
+                    <div class="ms-cell open"></div>
+                    <div class="ms-cell open"><span class="ms-n2">2</span></div>
+                    <div class="ms-cell "></div>
+                    <div class="ms-cell open"><span class="ms-n2">2</span></div>
+                    <div class="ms-cell open"><span class="ms-n1">1</span></div>
+                    <div class="ms-cell open"></div>
+                    <div class="ms-cell open"><span class="ms-n1">1</span></div>
+                    <div class="ms-cell open"><span class="ms-n3">3</span></div>
+                    <div class="ms-cell "></div>
+                    <div class="ms-cell "></div>
+                    <div class="ms-cell open"><span class="ms-n2">2</span></div>
+                    <div class="ms-cell open"></div>
+                    <div class="ms-cell "></div>
+                    <div class="ms-cell "></div>
+                    <div class="ms-cell "></div>
+                    <div class="ms-cell "></div>
+                    <div class="ms-cell open"><span class="ms-n1">1</span></div>
+                    <div class="ms-cell open"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- QUICK STATS -->
+    <section class="px-4 pb-24">
+        <div class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="card p-6 text-center">
+                <p class="score text-3xl grad">0%</p>
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mt-2">Guesswork</p>
+            </div>
+            <div class="card p-6 text-center">
+                <p class="score text-3xl grad">1</p>
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mt-2">Board a day</p>
+            </div>
+            <div class="card p-6 text-center">
+                <p class="score text-3xl grad">&#8734;</p>
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mt-2">Endless mode</p>
+            </div>
+            <div class="card p-6 text-center">
+                <p class="score text-3xl grad">3</p>
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] muted mt-2">Free games, no ads</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="px-4 py-24 sec" style="border-top:1px solid var(--line)">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="display text-4xl md:text-5xl tracking-tight mb-8">About the <span class="grad">Game</span></h2>
+            <p class="text-lg mb-5">Everyone who has played minesweeper knows the moment: the board is clean, the logic
+                is exhausted, and two tiles are left with no way to tell which one kills you.
+                <strong>MineQuest removes that moment.</strong> Boards are generated and then verified, so a chain of
+                pure deduction always runs from your first tap to the last flag.</p>
+            <p class="text-lg mb-5">On top of that sits everything the original never had: a
+                <strong>Daily Challenge</strong> that hands the same board to everyone, streaks to defend, achievements
+                to unlock, an Endless mode for when one board is not enough, and global leaderboards to climb. Progress
+                syncs to the cloud, so your streak survives a new phone.</p>
+            <p class="text-lg">Stuck anyway? The hint engine works out the deduction you missed rather than simply
+                revealing a square &mdash; you finish the board having learned the pattern.</p>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="px-4 pb-24">
+        <div class="max-w-5xl mx-auto">
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="card p-7">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-5"
+                        style="background:rgba(126,224,196,.14)">
+                        <i data-lucide="shield-check" class="w-5 h-5 text-mint"></i>
+                    </div>
+                    <h3 class="display text-xl mb-2">Guess-Free Boards</h3>
+                    <p class="text-sm muted leading-relaxed">Verified solvable by logic alone. No luck, no unfair losses.</p>
+                </div>
+                <div class="card p-7">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-5"
+                        style="background:rgba(255,180,84,.14)">
+                        <i data-lucide="calendar-days" class="w-5 h-5 text-amber"></i>
+                    </div>
+                    <h3 class="display text-xl mb-2">Daily Challenge</h3>
+                    <p class="text-sm muted leading-relaxed">One board for everyone, every day. Build a streak and defend it.</p>
+                </div>
+                <div class="card p-7">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-5"
+                        style="background:rgba(126,224,196,.14)">
+                        <i data-lucide="lightbulb" class="w-5 h-5 text-mint"></i>
+                    </div>
+                    <h3 class="display text-xl mb-2">A Real Hint Engine</h3>
+                    <p class="text-sm muted leading-relaxed">Finds the deduction you missed instead of just revealing a tile.</p>
+                </div>
+                <div class="card p-7">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-5"
+                        style="background:rgba(255,180,84,.14)">
+                        <i data-lucide="trophy" class="w-5 h-5 text-amber"></i>
+                    </div>
+                    <h3 class="display text-xl mb-2">Global Leaderboards</h3>
+                    <p class="text-sm muted leading-relaxed">Cloud-synced progress, achievements and worldwide ranks.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="px-4 pb-28">
+        <div class="max-w-5xl mx-auto">
+            <div class="mb-12 max-w-2xl">
+                <p class="text-xs font-semibold uppercase tracking-[0.28em] muted mb-5">How it plays</p>
+                <h2 class="display text-4xl md:text-5xl">Old rules. <span class="grad">No coin flips.</span></h2>
+            </div>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="card p-8">
+                    <div class="display text-5xl grad mb-5">01</div>
+                    <h3 class="display text-xl mb-3">Tap to reveal</h3>
+                    <p class="text-sm muted leading-relaxed">Open a tile. Each number counts the mines touching it &mdash; that is your whole information budget.</p>
+                </div>
+                <div class="card p-8">
+                    <div class="display text-5xl grad mb-5">02</div>
+                    <h3 class="display text-xl mb-3">Long-press to flag</h3>
+                    <p class="text-sm muted leading-relaxed">Mark what you have proven is a mine. Your flags are the record of the reasoning.</p>
+                </div>
+                <div class="card p-8">
+                    <div class="display text-5xl grad mb-5">03</div>
+                    <h3 class="display text-xl mb-3">Clear it cleanly</h3>
+                    <p class="text-sm muted leading-relaxed">Every safe tile is reachable by deduction. If you are stuck a hint exists &mdash; a guess never has to.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="px-4 py-28" style="border-top:1px solid var(--line)">
+        <div class="max-w-5xl mx-auto">
+            <div class="mb-12 max-w-2xl">
+                <p class="text-xs font-semibold uppercase tracking-[0.28em] muted mb-5">Ways to play</p>
+                <h2 class="display text-4xl md:text-5xl mb-5">More than one board.</h2>
+                <p class="muted leading-relaxed">Classic sweeping is the core. The reasons to come back tomorrow are
+                    what the original never had.</p>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="card p-7">
+                    <p class="text-xs font-semibold uppercase tracking-[0.18em] muted mb-3">Daily</p>
+                    <p class="display text-3xl mb-2">1 / day</p>
+                    <p class="text-sm muted leading-relaxed">The same board for every player, worldwide.</p>
+                </div>
+                <div class="card p-7">
+                    <p class="text-xs font-semibold uppercase tracking-[0.18em] muted mb-3">Endless</p>
+                    <p class="display text-3xl mb-2">&#8734;</p>
+                    <p class="text-sm muted leading-relaxed">Board after board, for as long as you keep clearing them.</p>
+                </div>
+                <div class="card p-7">
+                    <p class="text-xs font-semibold uppercase tracking-[0.18em] muted mb-3">Streaks</p>
+                    <p class="display text-3xl mb-2">&#128293;</p>
+                    <p class="text-sm muted leading-relaxed">Miss a day and it resets. That is the whole point.</p>
+                </div>
+                <div class="card p-7">
+                    <p class="text-xs font-semibold uppercase tracking-[0.18em] muted mb-3">Statistics</p>
+                    <p class="display text-3xl mb-2">&#8721;</p>
+                    <p class="text-sm muted leading-relaxed">Win rate, best times and history, charted per difficulty.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="px-4 pb-28">
+        <div class="max-w-5xl mx-auto">
+            <div class="mb-12 max-w-2xl">
+                <p class="text-xs font-semibold uppercase tracking-[0.28em] muted mb-5">On ads</p>
+                <h2 class="display text-4xl md:text-5xl">Never mid-board.</h2>
+            </div>
+            <div class="grid sm:grid-cols-3 gap-4">
+                <div class="card p-8">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-5"
+                        style="background:rgba(126,224,196,.14)">
+                        <i data-lucide="square-check" class="w-5 h-5 text-mint"></i>
+                    </div>
+                    <h3 class="display text-xl mb-2">Only at the end</h3>
+                    <p class="text-sm muted leading-relaxed">Full-screen ads appear when you leave a finished game. Never on launch, never as a board begins.</p>
+                </div>
+                <div class="card p-8">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-5"
+                        style="background:rgba(255,180,84,.14)">
+                        <i data-lucide="timer" class="w-5 h-5 text-amber"></i>
+                    </div>
+                    <h3 class="display text-xl mb-2">Two-minute cooldown</h3>
+                    <p class="text-sm muted leading-relaxed">Back-to-back interstitials are impossible by construction, however fast you play.</p>
+                </div>
+                <div class="card p-8">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-5"
+                        style="background:rgba(139,124,246,.15)">
+                        <i data-lucide="hand" class="w-5 h-5 text-violet"></i>
+                    </div>
+                    <h3 class="display text-xl mb-2">Not for three games</h3>
+                    <p class="text-sm muted leading-relaxed">Your first three games are completely uninterrupted.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DETAILS -->
+    <section class="px-4 pb-28">
+        <div class="max-w-5xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="card p-6">
+                <p class="text-xs font-bold uppercase tracking-[0.18em] muted mb-2">Publisher</p>
+                <p class="display text-lg">Arcadly</p>
+            </div>
+            <div class="card p-6">
+                <p class="text-xs font-bold uppercase tracking-[0.18em] muted mb-2">Release Date</p>
+                <p class="display text-lg">2026</p>
+            </div>
+            <div class="card p-6">
+                <p class="text-xs font-bold uppercase tracking-[0.18em] muted mb-2">Platform</p>
+                <p class="display text-lg">Android</p>
+            </div>
+            <div class="card p-6">
+                <p class="text-xs font-bold uppercase tracking-[0.18em] muted mb-2">Genre</p>
+                <p class="display text-lg">Puzzle</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="px-4 py-14" style="border-top:1px solid var(--line)">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+                <p class="display text-lg">ARCADLY</p>
+                <p class="text-sm muted mt-1">&copy; 2026 Crafted for Champions.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-6 text-sm font-semibold">
+                <a href="index.html" class="muted hover:text-mint transition-colors">Home</a>
+                <a href="pour-privacy.html" class="muted hover:text-mint transition-colors">Privacy</a>
+                <a href="mailto:skyhopper089@gmail.com" class="muted hover:text-mint transition-colors">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        document.querySelectorAll('.card').forEach((el) => {
+            el.addEventListener('pointermove', (e) => {
+                const r = el.getBoundingClientRect();
+                el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+                el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+            });
+        });
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        }
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</body>
+
+</html>
