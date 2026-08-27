@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy — Phone Escape | Arcadly</title>
+    <meta name="description"
+        content="Privacy Policy for Phone Escape — the game collects nothing, and this explains exactly what that means.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { ink: '#08090D', mint: '#7EE0C4', amber: '#FFB454', violet: '#8B7CF6' },
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        display: ['Chakra Petch', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg: #FBFBFA;
+            --fg: #08090D;
+            --muted: #61667A;
+            --card: rgba(255, 255, 255, .72);
+            --line: rgba(8, 9, 13, .10);
+            --line-strong: rgba(8, 9, 13, .16);
+            --glow: rgba(126, 224, 196, .22);
+        }
+
+        html.dark {
+            --bg: #08090D;
+            --fg: #F3F5FA;
+            --muted: #8A90A6;
+            --card: rgba(255, 255, 255, .035);
+            --line: rgba(255, 255, 255, .08);
+            --line-strong: rgba(255, 255, 255, .14);
+            --glow: rgba(126, 224, 196, .16);
+        }
+
+        * { -webkit-font-smoothing: antialiased; }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            transition: background-color .4s ease, color .4s ease;
+            overflow-x: hidden;
+        }
+
+        /* ---------- Animated gradient mesh ----------
+           Three blurred blobs drifting on independent loops. Kept on a fixed,
+           pointer-transparent layer so it never intercepts a click and never
+           forces the page to scroll sideways. */
+        .mesh {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            width: 42vw;
+            height: 42vw;
+            min-width: 380px;
+            min-height: 380px;
+            border-radius: 9999px;
+            filter: blur(90px);
+            opacity: .30;
+            will-change: transform;
+        }
+
+        html:not(.dark) .blob { opacity: .38; }
+
+        .blob-1 { background: #7EE0C4; top: -14vw; left: -8vw; animation: drift1 26s ease-in-out infinite; }
+        .blob-2 { background: #FFB454; top: -6vw; right: -10vw; animation: drift2 32s ease-in-out infinite; }
+        .blob-3 { background: #8B7CF6; top: 42vh; left: 30vw; opacity: .18; animation: drift3 38s ease-in-out infinite; }
+
+        @keyframes drift1 {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+            50%      { transform: translate3d(8vw, 6vh, 0) scale(1.15); }
+        }
+
+        @keyframes drift2 {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1.1); }
+            50%      { transform: translate3d(-7vw, 9vh, 0) scale(.9); }
+        }
+
+        @keyframes drift3 {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+            50%      { transform: translate3d(-10vw, -8vh, 0) scale(1.2); }
+        }
+
+        /* Fine film grain, so the large flat gradients do not band. */
+        .grain {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: .30;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
+        }
+
+        html:not(.dark) .grain { opacity: .18; }
+
+        main, nav, footer, header, section { position: relative; z-index: 2; }
+
+        /* ---------- Cards with cursor spotlight ---------- */
+        .card {
+            position: relative;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            transition: border-color .3s ease, transform .3s ease;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity .35s ease;
+            background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 65%);
+            pointer-events: none;
+        }
+
+        .card:hover { border-color: var(--line-strong); transform: translateY(-3px); }
+        .card:hover::before { opacity: 1; }
+
+        /* Gradient hairline along the top edge. */
+        .card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 12%;
+            right: 12%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(126, 224, 196, .55), transparent);
+            opacity: 0;
+            transition: opacity .35s ease;
+        }
+
+        .card:hover::after { opacity: 1; }
+
+        .grad {
+            background: linear-gradient(96deg, #FFE9A8 0%, #FFB454 38%, #7EE0C4 72%, #8B7CF6 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .chip {
+            border: 1px solid var(--line);
+            border-radius: 9999px;
+            background: var(--card);
+            backdrop-filter: blur(8px);
+        }
+
+        .muted { color: var(--muted); }
+
+
+        /* ---------- Scroll reveal ---------- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity .7s cubic-bezier(.16, 1, .3, 1), transform .7s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .reveal.in { opacity: 1; transform: none; }
+
+        /* ---------- Marquee ---------- */
+        .marquee {
+            overflow: hidden;
+            mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+        }
+
+        .marquee-track { display: flex; gap: 3rem; width: max-content; animation: slide 28s linear infinite; }
+
+        @keyframes slide { to { transform: translateX(-50%); } }
+
+        @media (prefers-reduced-motion: reduce) {
+            .blob, .marquee-track { animation: none; }
+            .reveal { opacity: 1; transform: none; transition: none; }
+            .card { transition: none; }
+        }
+
+        /* ---------- Policy document typography ---------- */
+        .sec p, .sec li { color: var(--muted); line-height: 1.75; }
+        .sec strong { color: var(--fg); }
+        .sec a { color: #7EE0C4; text-decoration: underline; text-underline-offset: 3px; }
+
+        /* Long tables scroll inside their own container so the page body never
+           scrolls sideways on a phone. */
+        .tbl { width: 100%; border-collapse: collapse; font-size: .9rem; }
+
+        .tbl th, .tbl td {
+            border: 1px solid var(--line);
+            padding: .7rem .85rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .tbl th {
+            font-family: 'Chakra Petch', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: .72rem;
+            letter-spacing: .08em;
+            color: var(--muted);
+        }
+
+        /* ---------- Arcade treatment ---------- */
+        .display {
+            font-family: 'Chakra Petch', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            line-height: .98;
+            text-transform: uppercase;
+        }
+
+        .score {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+        }
+
+        /* Buttons physically depress, the way an arcade cabinet button does. */
+        .btn-press { transition: transform .12s ease, box-shadow .12s ease, filter .2s ease; }
+        .btn-press:active { transform: translateY(2px) scale(.99); }
+
+        /* XP-style meter used for build progress on the game cards. */
+        .meter {
+            height: 6px;
+            border-radius: 9999px;
+            background: rgba(127, 127, 145, .22);
+            overflow: hidden;
+        }
+
+        .meter > i {
+            display: block;
+            height: 100%;
+            border-radius: 9999px;
+            background: linear-gradient(90deg, #7EE0C4, #FFB454);
+            box-shadow: 0 0 12px rgba(126, 224, 196, .55);
+        }
+
+        /* Faint CRT scanlines. Very low contrast so text stays crisp. */
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: .35;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, .035) 0px,
+                rgba(255, 255, 255, .035) 1px,
+                transparent 1px,
+                transparent 3px);
+        }
+
+        html:not(.dark) .scanlines { opacity: .12; background: repeating-linear-gradient(
+                to bottom, rgba(0,0,0,.04) 0px, rgba(0,0,0,.04) 1px, transparent 1px, transparent 3px); }
+
+        @media (prefers-reduced-motion: reduce) {
+            .btn-press { transition: none; }
+        }
+    </style>
+</head>
+
+<body class="font-sans">
+
+    <div class="mesh" aria-hidden="true">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <nav class="fixed top-0 inset-x-0 z-50 px-4 pt-4">
+        <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-5 py-3 rounded-2xl backdrop-blur-xl"
+            style="background:var(--card); border:1px solid var(--line)">
+            <a href="index.html" class="display text-lg">ARCADLY</a>
+            <div class="hidden md:flex items-center gap-7 text-sm font-semibold">
+                <a href="index.html#hero" class="muted hover:text-mint transition-colors">Home</a>
+                <a href="index.html#games" class="muted hover:text-mint transition-colors">Games</a>
+                <a href="index.html#devlog" class="muted hover:text-mint transition-colors">Dev Log</a>
+            </div>
+            <button onclick="toggleTheme()" aria-label="Toggle theme"
+                class="w-10 h-10 rounded-xl flex items-center justify-center hover:text-mint transition-colors"
+                style="border:1px solid var(--line)">
+                <i data-lucide="moon" class="dark:hidden w-4 h-4"></i>
+                <i data-lucide="sun" class="hidden dark:block w-4 h-4"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="relative pt-36 pb-28 px-4">
+        <div class="max-w-3xl mx-auto relative">
+
+            <a href="index.html"
+                class="inline-flex items-center gap-2 text-sm font-semibold muted hover:text-mint transition-colors mb-8">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Arcadly
+            </a>
+
+            <span class="chip inline-block px-4 py-1.5 text-xs font-semibold muted">Last updated: 27 August 2026</span>
+            <h1 class="mt-6 display text-5xl md:text-6xl tracking-tight leading-[1.05]">
+                Privacy <span class="grad">Policy</span>
+            </h1>
+            <p class="mt-4 text-lg font-semibold">Phone Escape</p>
+            <p class="mt-6 muted leading-relaxed">This policy is written to match what the app actually does. For
+                Phone Escape that makes it unusually short: the game has no networking code in it, so there is nothing
+                it could send anywhere even if it wanted to.</p>
+
+            <div class="card p-7 mt-10 sec">
+                <p class="text-sm font-bold uppercase tracking-[0.18em] muted mb-4">In short</p>
+                <ul class="list-disc ml-5 space-y-2">
+                    <li>No accounts, no login, no name, email or phone number</li>
+                    <li>No adverts, no analytics, no crash reporting, no trackers</li>
+                    <li>No in-app purchases</li>
+                    <li>The app requests <strong>no Android permissions at all</strong></li>
+                    <li>Your progress is saved on your phone and never leaves it</li>
+                </ul>
+            </div>
+
+            <div class="mt-12 space-y-12 sec">
+
+                <section>
+                    <h2 class="display text-2xl mb-4">1. Information we collect</h2>
+                    <p>None. We do not collect, transmit, sell or share any personal information, device identifiers,
+                        advertising IDs, location, contacts, photographs or usage data.</p>
+                    <p class="mt-4">Phone Escape contains no advertising SDK, no analytics SDK, no crash reporting and
+                        no social login. Nothing in the app communicates with any server operated by us or by anyone
+                        else.</p>
+                </section>
+
+                <section>
+                    <h2 class="display text-2xl mb-4">2. What is stored on your device</h2>
+                    <p>Your progress is saved locally using Android&rsquo;s standard app storage. It never leaves the
+                        device and is not visible to us. It consists of:</p>
+                    <ul class="list-disc ml-5 space-y-2 mt-4">
+                        <li>Which cases you have completed, and your best time for each</li>
+                        <li>Your daily streak &mdash; a count, and the day of your last completed Daily Mystery</li>
+                        <li>Your case file &mdash; lines of evidence you have uncovered, which later cases refer to</li>
+                        <li>Your sound preference</li>
+                    </ul>
+                    <p class="mt-4">None of it identifies you.</p>
+                </section>
+
+                <section>
+                    <h2 class="display text-2xl mb-4">3. Permissions the app requests</h2>
+                    <p>None. Phone Escape declares no Android permissions &mdash; not internet, storage, camera,
+                        microphone, location or contacts. You can confirm this on the app&rsquo;s Play Store listing
+                        under <em>App permissions</em>, which will read &ldquo;No permissions required&rdquo;.</p>
+                    <p class="mt-4">The only outbound action in the whole game is the <strong>Privacy Policy</strong>
+                        button in Settings, which hands this address to your own browser. The browser does the
+                        fetching; the game never touches the network itself.</p>
+                </section>
+
+                <section>
+                    <h2 class="display text-2xl mb-4">4. Deleting your data</h2>
+                    <p>Open <strong>Settings</strong> from the top right of the main screen and choose
+                        <strong>Delete saved data</strong>. That erases every completion, best time, your streak and
+                        your case file from the device immediately. Uninstalling the app removes everything as well.</p>
+                </section>
+
+                <section>
+                    <h2 class="display text-2xl mb-4">5. Children</h2>
+                    <p>Because the game collects no data from anyone, it collects no data from children. We do not
+                        knowingly collect personal information from users of any age, as we do not collect personal
+                        information at all.</p>
+                </section>
+
+                <section>
+                    <h2 class="display text-2xl mb-4">6. Your rights</h2>
+                    <p>Rights under the GDPR, the UK GDPR, the CCPA and India&rsquo;s DPDP Act &mdash; to access,
+                        correct, export or erase personal data &mdash; apply to data a company holds about you. We hold
+                        none. The only data that exists is on your own device, and erasing it is a button inside the
+                        game.</p>
+                </section>
+
+                <section>
+                    <h2 class="display text-2xl mb-4">7. Changes to this policy</h2>
+                    <p>If a future version of Phone Escape ever collects anything &mdash; online leaderboards, for
+                        instance &mdash; this policy will be updated before that version ships, and the change will be
+                        described plainly here rather than buried.</p>
+                </section>
+
+                <section>
+                    <h2 class="display text-2xl mb-4">8. Contact</h2>
+                    <p>Questions about this policy can go to
+                        <a href="mailto:skyhopper089@gmail.com" class="text-mint font-semibold">skyhopper089@gmail.com</a>.
+                    </p>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        document.querySelectorAll('.card').forEach((el) => {
+            el.addEventListener('pointermove', (e) => {
+                const r = el.getBoundingClientRect();
+                el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+                el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+            });
+        });
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        }
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</body>
+
+</html>
